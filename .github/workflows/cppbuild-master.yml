@@ -35,9 +35,9 @@ jobs:
         env:
           CC: gcc
           CXX: g++
-          run: |
-            mkdir ./cmake-build-debug
-            cd cmake-build-debug
-            cmake ../
-            cmake --build .
-          shell: bash
+        run: |
+          mkdir ./cmake-build-debug
+          cd cmake-build-debug
+          cmake ../
+          cmake --build .
+        shell: bash
