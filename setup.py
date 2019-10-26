@@ -133,7 +133,9 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pylibczi',
-    version='2.0.0',
+    # Do not edit this string manually, always use bumpversion
+    # Details in CONTRIBUTING.md
+    version='1.1.1',
     author='Paul Watkins, Jamie Sherman',
     author_email='pwatkins@gmail.com, jamies@alleninstitute.org',
     description='A python module and a python extension for Zeiss (CZI/ZISRAW) microscopy files.',
@@ -148,5 +150,6 @@ setup(
     test_suite='pylibczi/tests',
     tests_require=test_requirements,
     extras_require=extra_requirements,
+    url="https://github.com/AllenCellModeling/pylibczi",
     zip_safe=False,
 )
