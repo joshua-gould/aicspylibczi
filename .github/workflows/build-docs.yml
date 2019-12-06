@@ -3,14 +3,14 @@ name: Docs
 on:
   push:
     branches:
-      - master
+      - stable
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ghpages: [no]
+        ghpages: [yes]
     steps:
       - uses: actions/checkout@v1
         with:
@@ -20,7 +20,7 @@ jobs:
         run: |
           #need to add env variables
           echo "Creating remote branch ${BRANCH} as it doesn't exist..."
-          git checkout "${BASE_BRANCH:-master}"
+          git checkout "${BASE_BRANCH:-stable}"
           git checkout --orphan $BRANCH
           git rm -rf .
           touch README.md
