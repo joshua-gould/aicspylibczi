@@ -9,7 +9,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
+          with:
+            submodules: true
       - name: Set up Python
         uses: actions/setup-python@master
         with:

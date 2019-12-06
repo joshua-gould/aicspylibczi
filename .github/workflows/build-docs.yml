@@ -12,7 +12,7 @@ jobs:
       matrix:
         ghpages: [yes]
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
         with:
           submodules: true
       - name: Create gh-pages
