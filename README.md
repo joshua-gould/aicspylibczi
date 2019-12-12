@@ -1,4 +1,4 @@
-# pylibczi
+# aicspylibczi
 [![C++ Build & Test](https://github.com/AllenCellModeling/pylibczi/workflows/C%2B%2B%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/pylibczi/actions)
 [![Python Build & Test](https://github.com/AllenCellModeling/pylibczi/workflows/Python%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/pylibczi/actions)
 [![codecov](https://codecov.io/gh/AllenCellModeling/pylibczi/branch/feature/pybind11/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/pylibczi)
@@ -14,12 +14,12 @@ The first example show how to work with a standard CZI file (Single or Multe-Sce
 #### Example 1:  Read in a czi and select a portion of the image to display
 ```python
 import numpy as np
-import aicspylibczi
-import pathlib
+from aicspylibczi import CziFile
+from pathlib import Path
 from PIL import Image
 
-pth = pathlib.Path('/allen/aics/assay-dev/MicroscopyData/Sue/2019/20190610/20190610_S02-02.czi')
-czi = aicspylibczi.CziFile(pth)
+pth = Path('20190610_S02-02.czi')
+czi = CziFile(pth)
 
 # Get the shape of the data, the coordinate pairs are (start index, size)
 dimensions = czi.dims_shape()  # {'Z': (0, 70), 'C': (0, 2), 'T': (0, 146), 'S': (0, 12), 'B': (0, 1)}
@@ -29,20 +29,40 @@ czi.dims  #  BSTCZYX
 czi.size  #  (1, 12, 146, 2, 70, 1300, 1900) 
 
 # Load the image slice I want from the file
-img, shp = czi.read_image(S=4, T=11, C=0, Z=30) 
+img, shp = czi.read_image(S=13, Z=16)
 
-# shp = [('S', 1), ('T', 1), ('C', 1), ('Z', 1), ('Y', 1300), ('X', 1900)]  # List[(Dimension, size), ...]
-# img.shape = (1, 1, 1, 1, 1300, 1900)   # numpy.ndarray
+# shp = [('B', 1), ('S', 1), ('C', 4), ('Z', 1), ('Y', 1300), ('X', 1900)]  # List[(Dimension, size), ...] 
+# img.shape = (1, 1, 4, 1, 1300, 1900)   # numpy.ndarray
 
-# Normalize the image 
-norm_by = np.percentile(img[0, 0, 0,], [50, 99.8])
+# define helper functions
+def norm_by(x, min, max):
+    norms = np.percentile(x, [min, max])
+    i2 = np.clip((x - norms[0])/(norms[1]-norms[0]), 0, 1)
+    i2
+    return i2
 
-# Scale the numpy array values and cast them back to integers in the 0 to 255 range
-i2 = np.clip((img - norm_by[0])/(norm_by[1]-norm_by[0]), 0, 1)*255
+def recolor(im): # transform from rgb to cyan-magenta-yellow
+    im_shape = np.array(im.shape)
+    color_transform = np.array([[1, 1, 0], [0, 1, 1], [1, 0, 1]]).T
+    im_reshape = im.reshape([np.prod(im_shape[0:2]), im_shape[2]]).T
+    im_recolored = np.matmul(color_transform.T, im_reshape).T
+    im_shape[2] = 3
+    im = im_recolored.reshape(im_shape)
+    return im
 
-img_disp = Image.fromarray(i2[0,0,0,0,200:1100,500:1000].astype(np.uint8))
+#normalize, combine into RGB and transform to CMY
+c1 = (norm_by(img[0, 0, 0, 0, 0:750, 250:1000], 50, 99.8)*255).astype(np.uint8)
+c2 = (norm_by(img[0, 0, 1, 0, 0:750, 250:1000], 50, 99.8)*255).astype(np.uint8)
+c3 = (norm_by(img[0, 0, 2, 0, 0:750, 250:1000], 0, 100)*255).astype(np.uint8)
+rgb = np.stack((c1, c2, c3), axis=2)
+cmy = np.clip(recolor(rgb), 0, 255)
+
+# plot using matplotlib¶
+plt.figure(figsize=(10,10))
+plt.imshow(cmy)
+plt.axis('off')
 ```
-![Colony Image](images/colony.png)
+![Colony Image](images/cardio.png)
 
 #### Example 2:  Read in a mosaic file 
 ```python
@@ -68,9 +88,8 @@ mosaic_data = czi.read_mosaic(C=0, scale_factor=1)
 mosaic_data.shape  #  (1, 1, 624, 1756)
  # the C channel has been specified S & M are used internally for position so this is (T, Z, Y, X)
 
-norm_by = np.percentile(mosaic_data, [5, 98])
-normed_mosaic_data = np.clip((mosaic_data - norm_by[0])/(norm_by[1]-norm_by[0]), 0, 1)*255
-img = Image.fromarray(normed_mosaic_data[0,0].astype(np.uint8))
+normed_mosaic_data = norm_by(mosaic_data[0, 0, :, :], 5, 98)*255
+img = Image.fromarray(normed_mosaic_data.astype(np.uint8))
 ```
 ![Mosaic Image](images/mosaic.png)
 
