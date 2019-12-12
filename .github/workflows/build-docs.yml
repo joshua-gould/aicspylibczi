@@ -34,6 +34,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BASE_BRANCH: release/aicspylibczi
+          BASE_BRANCH: rename/aicspylibczi
           BRANCH: gh-pages
           FOLDER: cmake-build-debug/docs/html
