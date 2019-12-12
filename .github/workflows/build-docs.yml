@@ -2,74 +2,36 @@ name: Docs
 
 on:
   push:
-    branches:
-      - stable
+    tags:
+      - 'docs'
 
 jobs:
   docs:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ghpages: [yes]
     steps:
       - uses: actions/checkout@v1
         with:
           submodules: true
-      - name: Create gh-pages
-        if: matrix.ghpages == 'no'
-        run: |
-          #need to add env variables
-          echo "Creating remote branch ${BRANCH} as it doesn't exist..."
-          git checkout "${BASE_BRANCH:-stable}"
-          git checkout --orphan $BRANCH
-          git rm -rf .
-          touch README.md
-          git add README.md
-          git commit -m "Initial ${BRANCH} commit"
-          git push $REPO_PATH $BRANCH
-      - name: setup python
+      - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.7
-      - name: setup folders
-        env:
-          BUILD_HOME: cmake-build-debug
-          FOLDER: docs/html
-          BRANCH: gh-pages
-          GHREPO: "pylbiczi"
-          REPO_PATH: "https://${{secrets.ACCESS_TOKEN}}@github.com/AllenCellModeling/pylibczi.git"
+      - name: Install Depenencies
         run: |
-          mkdir -p $BUILD_HOME/$FOLDER
-          git clone $REPO_PATH ${BUILD_HOME}/${FOLDER}
-          pushd .
-          cd $BUILD_HOME/$FOLDER
-          git checkout $BRANCH
-          popd
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install .[dev]
-        shell: bash
-
       - name: Generate Docs
-        env:
-          CC: clang
-          CXX: clang++
-          BUILD_HOME: cmake-build-debug
-          FOLDER: docs/html
-          BRANCH: gh-pages
-          GHREPO: "pylbiczi"
-          REPO_PATH: "https://${{secrets.ACCESS_TOKEN}}@github.com/AllenCellModeling/pylibczi.git"
+        with:
+          BUILD_DOCS: true
         run: |
-          git config --global user.email "jamie.sherman@gmail.com"
-          git config --global user.name "heeler"
-          cd $BUILD_HOME
+          mkdir cmake_build_debug
+          cd cmake_build_debug
           cmake ..
           cmake --build . --target docs
-          cd $FOLDER
-          touch .nojekyll
-          git add -f .nojekyll
-          git add ./*
-          git commit -m "Deploying branch to gh-pages" --quiet
-          git push $REPO_PATH ${BRANCH} --quiet
-        shell: bash
+      - name: Publish Docs
+        uses: JamesIves/github-pages-deploy-action-python@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BASE_BRANCH: release/aicspylibczi
+          BRANCH: gh-pages
+          FOLDER: cmake-build-debug/docs/html

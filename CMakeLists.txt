@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 set(CMAKE_MACOSX_RPATH 1)
-project(_pylibczi)
+project(_aicspylibczi)
 # build problems with library dependencies if I go above C++14
 # namely the dependencies on the Eigen library and they have to update
 # their use of std::bind2nd / std::bind1st to std::bind
@@ -32,19 +32,19 @@ add_subdirectory(pybind11)
 include_directories(libCZI/Src)
 find_library(libCZI REQUIRED PATHS ${CMAKE_SOURCE_DIR}/libCZI)
 
-set(PYLIBCZI_C_SRC_HEADERS _pylibczi/Reader.h _pylibczi/helper_algorithms.h _pylibczi/exceptions.h _pylibczi/inc_libCZI.h
-        _pylibczi/IndexMap.h _pylibczi/Image.h _pylibczi/TypedImage.h _pylibczi/ImageFactory.h
-        _pylibczi/SourceRange.h _pylibczi/TargetRange.h _pylibczi/pylibczi_ostream.h _pylibczi/SubblockMetaVec.h _pylibczi/constants.h)
+set(PYLIBCZI_C_SRC_HEADERS _aicspylibczi/Reader.h _aicspylibczi/helper_algorithms.h _aicspylibczi/exceptions.h _aicspylibczi/inc_libCZI.h
+        _aicspylibczi/IndexMap.h _aicspylibczi/Image.h _aicspylibczi/TypedImage.h _aicspylibczi/ImageFactory.h
+        _aicspylibczi/SourceRange.h _aicspylibczi/TargetRange.h _aicspylibczi/pylibczi_ostream.h _aicspylibczi/SubblockMetaVec.h _aicspylibczi/constants.h)
 
-set(PYLIBCZI_C_SRC _pylibczi/Reader.cpp _pylibczi/IndexMap.cpp _pylibczi/Image.cpp _pylibczi/ImageFactory.cpp
-        _pylibczi/pylibczi_ostream.cpp _pylibczi/exceptions.cpp _pylibczi/SubblockSortable.h _pylibczi/pb_caster_SubblockMetaVec.h _pylibczi/constants.cpp)
+set(PYLIBCZI_C_SRC _aicspylibczi/Reader.cpp _aicspylibczi/IndexMap.cpp _aicspylibczi/Image.cpp _aicspylibczi/ImageFactory.cpp
+        _aicspylibczi/pylibczi_ostream.cpp _aicspylibczi/exceptions.cpp _aicspylibczi/SubblockSortable.h _aicspylibczi/pb_caster_SubblockMetaVec.h _aicspylibczi/constants.cpp)
 
-set(PYLIBCZI_PYBIND11 _pylibczi/pb_bindings.cpp _pylibczi/pb_helpers.h _pylibczi/pb_helpers.cpp _pylibczi/pb_caster_ImageVector.h
-        _pylibczi/pb_caster_BytesIO.h _pylibczi/pb_caster_libCZI_DimensionIndex.h _pylibczi/CSimpleStreamImplFromFd.h
-        _pylibczi/CSimpleStreamImplFromFd.cpp)
+set(PYLIBCZI_PYBIND11 _aicspylibczi/pb_bindings.cpp _aicspylibczi/pb_helpers.h _aicspylibczi/pb_helpers.cpp _aicspylibczi/pb_caster_ImageVector.h
+        _aicspylibczi/pb_caster_BytesIO.h _aicspylibczi/pb_caster_libCZI_DimensionIndex.h _aicspylibczi/CSimpleStreamImplFromFd.h
+        _aicspylibczi/CSimpleStreamImplFromFd.cpp)
 
 set(TARGET_ONE libczi_c++_extension)
-set(TARGET_TWO _pylibczi)
+set(TARGET_TWO _aicspylibczi)
 
 set_target_properties(libCZI PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 add_library(${TARGET_ONE} STATIC ${PYLIBCZI_C_SRC} ${PYLIBCZI_C_SRC_HEADERS})
@@ -58,5 +58,7 @@ add_custom_command(TARGET ${TARGET_TWO} POST_BUILD
         )
 
 add_subdirectory(c_tests)
-# add_subdirectory(docs)
 
+if(DEFINED ENV{BUILD_DOCS})
+    add_subdirectory(docs)
+endif()

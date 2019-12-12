@@ -1,18 +1,18 @@
-# This file is part of pylibczi.
+# This file is part of aicspylibczi.
 # Copyright (c) 2018 Center of Advanced European Studies and Research (caesar)
 #
-# pylibczi is free software: you can redistribute it and/or modify
+# aicspylibczi is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# pylibczi is distributed in the hope that it will be useful,
+# aicspylibczi is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with pylibczi.  If not, see <https://www.gnu.org/licenses/>.
+# along with aicspylibczi.  If not, see <https://www.gnu.org/licenses/>.
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
@@ -133,27 +133,26 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.', '--target', '_pylibczi'] + build_args, cwd=self.build_temp)
-
+        subprocess.check_call(['cmake', '--build', '.', '--target', '_aicspylibczi'] + build_args, cwd=self.build_temp)
 
 setup(
-    name='pylibczi',
+    name='aicspylibczi',
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
     version='2.1.0',
-    author='Paul Watkins, Jamie Sherman',
-    author_email='pwatkins@gmail.com, jamies@alleninstitute.org',
+    author='Jamie Sherman, Paul Watkins',
+    author_email='jamies@alleninstitute.org, pwatkins@gmail.com',
     description='A python module and a python extension for Zeiss (CZI/ZISRAW) microscopy files.',
     long_description=readme,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    keywords="aicsimageio, allen cell, imaging, computational biology",
-    ext_modules=[CMakeExtension('_pylibczi')],
-    packages=['pylibczi'],
+    keywords="aicspylibczi, allen cell, imaging, computational biology",
+    ext_modules=[CMakeExtension('_aicspylibczi')],
+    packages=['aicspylibczi'],
     cmdclass=dict(build_ext=CMakeBuild),
     install_requires=requirements,
     setup_requires=setup_requirements,
-    test_suite='pylibczi/tests',
+    test_suite='aicspylibczi/tests',
     tests_require=test_requirements,
     extras_require=extra_requirements,
     url="https://github.com/AllenCellModeling/pylibczi",

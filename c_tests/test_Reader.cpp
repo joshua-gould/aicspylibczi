@@ -3,9 +3,9 @@
 
 #include "catch.hpp"
 
-#include "../_pylibczi/exceptions.h"
-#include "../_pylibczi/Reader.h"
-#include "../_pylibczi/pb_helpers.h"
+#include "../_aicspylibczi/exceptions.h"
+#include "../_aicspylibczi/Reader.h"
+#include "../_aicspylibczi/pb_helpers.h"
 
 class CziCreator {
     std::unique_ptr<pylibczi::Reader> m_czi;

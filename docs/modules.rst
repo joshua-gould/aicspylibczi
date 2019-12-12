@@ -1,7 +1,7 @@
-pylibczi
-========
+aicspylibczi
+============
 
 .. toctree::
    :maxdepth: 4
 
-   pylibczi
+   aicspylibczi

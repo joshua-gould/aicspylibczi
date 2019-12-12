@@ -4,9 +4,9 @@ Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
 
 ## Get Started!
-Ready to contribute? Here's how to set up `pylibczi` for local development.
+Ready to contribute? Here's how to set up `aicspylibczi` for local development.
 
-1. Fork the `pylibczi` repo on GitHub.
+1. Fork the `aicspylibczi` repo on GitHub.
 2. Clone your fork locally:
 
     $ git clone git@github.com:{your_name_here}/pylibczi.git

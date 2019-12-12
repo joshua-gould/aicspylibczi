@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=pylibczi
+set SPHINXPROJ=aicspylibczi
 
 if "%1" == "" goto help
 

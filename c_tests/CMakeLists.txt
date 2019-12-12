@@ -1,12 +1,12 @@
 
-set(UNIT_TEST_SOURCE_LIST test_Reader.cpp test_Iterator.cpp test_Image.cpp test_main.cpp ../_pylibczi/pb_helpers.cpp)
+set(UNIT_TEST_SOURCE_LIST test_Reader.cpp test_Iterator.cpp test_Image.cpp test_main.cpp ../_aicspylibczi/pb_helpers.cpp)
 set(TARGET_NAME test_libczi_c++_extension)
 set(TARGET_EXE libczi+py)
 add_compile_definitions(_STATICLIBBUILD)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 #add_subdirectory(../pybind11)
-include_directories(../_pylibczi ../pybind11/include)
+include_directories(../_aicspylibczi ../pybind11/include)
 add_executable(${TARGET_NAME} ${UNIT_TEST_SOURCE_LIST})
 target_link_libraries(${TARGET_NAME} PRIVATE libczi_c++_extension libCZIStatic JxrDecodeStatic pybind11::embed)
 add_dependencies(${TARGET_NAME} libczi_c++_extension libCZIStatic JxrDecodeStatic )

@@ -5,15 +5,15 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(Sphinx)
 
-if(NOT DEFINED SPHINX_THEME)
+if (NOT DEFINED SPHINX_THEME)
     set(SPHINX_THEME "sphinx_rtd_theme")
 
-endif()
+endif ()
 
-if(NOT DEFINED SPHINX_THEME_DIR)
+if (NOT DEFINED SPHINX_THEME_DIR)
     set(SPHINX_THEME_DIR)
 
-endif()
+endif ()
 
 project(PyDocs)
 
@@ -29,10 +29,10 @@ set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
 set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
-    "${BINARY_BUILD_DIR}/conf.py"
-    @ONLY
-    )
+        "${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
+        "${BINARY_BUILD_DIR}/conf.py"
+        @ONLY
+)
 
 add_custom_target(docs ALL ${SPHINX_EXE}
         -q -b html
@@ -40,17 +40,15 @@ add_custom_target(docs ALL ${SPHINX_EXE}
         -d "${SPHINX_CACHE_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${SPHINX_HTML_DIR}"
-    COMMENT "Building HTML documentation with Sphinx"
-    )
+        COMMENT "Building HTML documentation with Sphinx"
+        )
 
 set(IMAGE_DIR "${CMAKE_CURRENT_BINARY_DIR}/html/images")
 
 make_directory(${IMAGE_DIR})
 
-set(IMAGES ${CMAKE_SOURCE_DIR}/images/colony.png ${CMAKE_SOURCE_DIR}/images/histo.png)
+set(IMAGES ${CMAKE_SOURCE_DIR}/images/colony.png ${CMAKE_SOURCE_DIR}/images/mosaic.png)
 
-add_custom_command(TARGET docs POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${IMAGE_DIR}
-        )
+add_custom_command(TARGET docs POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${IMAGE_DIR})
 
 file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/html/.nojekyll)

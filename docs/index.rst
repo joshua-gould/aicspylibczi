@@ -1,5 +1,6 @@
-.. This file is part of pylibczi.
+.. This file is part of aicspylibczi.
    Copyright (c) 2018 Center of Advanced European Studies and Research (caesar)
+   Copyright (c) 2019 Allen Institute for Cell Science
 
    pylibczi is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -12,15 +13,15 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with pylibczi.  If not, see <https://www.gnu.org/licenses/>.
+   along with aicspylibczi.  If not, see <https://www.gnu.org/licenses/>.
 
-.. pylibczi documentation master file, created by
+.. aicspylibczi documentation master file, created by
    sphinx-quickstart on Fri Aug 10 16:13:41 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pylibczi's documentation!
-====================================
+Welcome to aicspylibczi's documentation!
+========================================
 
 .. toctree::
    :hidden:

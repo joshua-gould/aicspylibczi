@@ -14,15 +14,19 @@ The first example show how to work with a standard CZI file (Single or Multe-Sce
 #### Example 1:  Read in a czi and select a portion of the image to display
 ```python
 import numpy as np
-import pylibczi
+import aicspylibczi
 import pathlib
 from PIL import Image
 
 pth = pathlib.Path('/allen/aics/assay-dev/MicroscopyData/Sue/2019/20190610/20190610_S02-02.czi')
-czi = pylibczi.CziFile(pth)
+czi = aicspylibczi.CziFile(pth)
 
 # Get the shape of the data, the coordinate pairs are (start index, size)
-dimensions = czi.dims()  # {'Z': (0, 70), 'C': (0, 2), 'T': (0, 146), 'S': (0, 12), 'B': (0, 1)}
+dimensions = czi.dims_shape()  # {'Z': (0, 70), 'C': (0, 2), 'T': (0, 146), 'S': (0, 12), 'B': (0, 1)}
+
+czi.dims  #  BSTCZYX
+
+czi.size  #  (1, 12, 146, 2, 70, 1300, 1900) 
 
 # Load the image slice I want from the file
 img, shp = czi.read_image(S=4, T=11, C=0, Z=30) 
@@ -43,27 +47,32 @@ img_disp = Image.fromarray(i2[0,0,0,0,200:1100,500:1000].astype(np.uint8))
 #### Example 2:  Read in a mosaic file 
 ```python
 import numpy as np
-import pylibczi
+import aicspylibczi
 import pathlib
 from PIL import Image
 
 mosaic_file = pathlib.Path('~/Data/20190618_CL001_HB01_Rescan_002.czi').expanduser()
-czi = pylibczi.CziFile(mosaic_file)
+czi = aicspylibczi.CziFile(mosaic_file)
 
 # Get the shape of the data
-dimensions = czi.dims()   # {'C': (0, 5), 'S': (0, 16), 'B': (0, 1)}
+dimensions = czi.dims   #  'STCZMYX'
+
+czi.size  # (1, 1, 1, 1, 2, 624, 924)
+
+czi.dims_shape()  # {'C': (0, 0), 'M': (0, 1), 'S': (0, 0), 'T': (0, 0), 'X': (0, 923), 'Y': (0, 623), 'Z': (0, 0)}
 
 czi.is_mosaic()  # True 
  # Mosaic files ignore the S dimension and use an internal mIndex to reconstruct, the scale factor allows one to generate a manageable image
-mosaic_data = czi.read_mosaic(C=1, scale_factor=0.1) 
+mosaic_data = czi.read_mosaic(C=0, scale_factor=1) 
 
-mosaic_data.shape  # (1, 1, 6265, 6998)
+mosaic_data.shape  #  (1, 1, 624, 1756)
+ # the C channel has been specified S & M are used internally for position so this is (T, Z, Y, X)
 
 norm_by = np.percentile(mosaic_data, [5, 98])
-normed_mosaic_data = np.clip((itwo - norm_by[0])/(norm_by[1]-norm_by[0]), 0, 1)*255
-img = Image.fromarray(normed_mosaic_data[0,0, 250:750, 250:750].astype(np.uint8))
+normed_mosaic_data = np.clip((mosaic_data - norm_by[0])/(norm_by[1]-norm_by[0]), 0, 1)*255
+img = Image.fromarray(normed_mosaic_data[0,0].astype(np.uint8))
 ```
-![Mosaic Histology Image](images/histo.png)
+![Mosaic Image](images/mosaic.png)
 
 ## Installation
 
@@ -71,16 +80,18 @@ The preferred installation method is with `pip install`.
 This will install the pylibczi python module and extension binaries ([hosted on PyPI](https://pypi.org/project/pylibczi/)):
 
 `
-pip install pylibczi
+pip install aicspylibczi
 `
 
 ## Documentation
 
-[Documentation](https://pylibczi.readthedocs.io/en/latest/index.html) is available on readthedocs.
+Documentation is available at 
+[github.io](https://allencellmodeling.github.io/pylibczi) and 
+[readthedocs](https://aicspylibczi.readthedocs.io/en/latest/index.html). 
 
 ## Build
 
-Use these steps to build and install pylibczi locally:
+Use these steps to build and install aicspylibczi locally:
 
 * Clone the repository including submodules (`--recurse-submodules`).
 * Requirements:
@@ -93,7 +104,12 @@ Use these steps to build and install pylibczi locally:
     pip install .[all] # for everything including jupyter notebook to work with the Example_Usage above
     ```
   * libCZI is automatically built as a submodule and linked statically into pylibczi.
-* Note: If you get the message `EXEC : Fatal Python error : initfsencoding: unable to load the file system codec ... ModuleNotFoundError: No module named 'encodings'` on windows you need to set PYTHONHOME to be the folder the python.exe you are compiling against lives in.
+* Note: If you get the message directly below on windows you need to set PYTHONHOME to be the folder the python.exe you are compiling against lives in.
+ ```
+EXEC : Fatal Python error : initfsencoding: unable to load the file system codec ... 
+ModuleNotFoundError: No module named 'encodings'
+``` 
+
 
 
 ## License
