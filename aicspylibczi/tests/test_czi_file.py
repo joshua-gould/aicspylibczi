@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from aicspylibczi import CziFile
-from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
+#from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
 
 
 @pytest.mark.parametrize("as_string", [
@@ -149,13 +149,13 @@ def test_read_image_two(data_dir, fname, exp_str, exp_dict):
     assert dim_dict == exp_dict
 
 
-@pytest.mark.parametrize("fname", [
-    pytest.param('s_1_t_1_c_1_z_1.czi', marks=pytest.mark.raises(exception=PylibCZI_CDimCoordinatesOverspecifiedException)),
-])
-def test_read_image_mosaic(data_dir, fname):
-    czi = CziFile(str(data_dir / fname))
-    czi.read_image(M=0)
-    assert True
+# @pytest.mark.parametrize("fname", [
+#     pytest.param('s_1_t_1_c_1_z_1.czi', marks=pytest.mark.raises(exception=PylibCZI_CDimCoordinatesOverspecifiedException)),
+# ])
+# def test_read_image_mosaic(data_dir, fname):
+#     czi = CziFile(str(data_dir / fname))
+#     czi.read_image(M=0)
+#     assert True
 
 
 @pytest.mark.parametrize("fname, expected", [
