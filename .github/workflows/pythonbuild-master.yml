@@ -28,7 +28,7 @@ jobs:
           pip install .[test]
       - name: Test with pytest
         run: |
-          pytest --cov-report xml --cov=pylibczi pylibczi/tests
+          pytest --cov-report xml --cov=aicspylibczi aicspylibczi/tests
           codecov -t ${{ secrets.CodeCovKey }}
   lint:
     runs-on: ubuntu-latest
