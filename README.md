@@ -130,8 +130,6 @@ EXEC : Fatal Python error : initfsencoding: unable to load the file system codec
 ModuleNotFoundError: No module named 'encodings'
 ``` 
 
-
-
 ## License
 
 The GPLv3 license is a consequence of libCZI which imposes GPLv3. If you wish to use libCZI or this derivative in
@@ -144,3 +142,7 @@ Paul Watkins and focused on mSEM data. In attempting to extend the work to we tr
 to pybind11, implemented c++ and python tests, added continuous integration via github actions, 
 and added the functionality to read individual subblocks and stacks of subblocks as a numpy.ndarray. 
 Metadata reading, including specific subblock metadata reading has also been added.  
+
+We intend for this work to be merged back into the original project once we have the new work integrated with
+the original work.
+
