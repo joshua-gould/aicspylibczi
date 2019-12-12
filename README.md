@@ -1,7 +1,7 @@
 # aicspylibczi
-[![C++ Build & Test](https://github.com/AllenCellModeling/pylibczi/workflows/C%2B%2B%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/pylibczi/actions)
-[![Python Build & Test](https://github.com/AllenCellModeling/pylibczi/workflows/Python%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/pylibczi/actions)
-[![codecov](https://codecov.io/gh/AllenCellModeling/pylibczi/branch/feature/pybind11/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/pylibczi)
+[![C++ Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/C%2B%2B%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
+[![Python Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/Python%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
+[![codecov](https://codecov.io/gh/AllenCellModeling/aicspylibczi/branch/feature/pybind11/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicspylibczi)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
@@ -71,7 +71,7 @@ import aicspylibczi
 import pathlib
 from PIL import Image
 
-mosaic_file = pathlib.Path('~/Data/20190618_CL001_HB01_Rescan_002.czi').expanduser()
+mosaic_file = pathlib.Path('20190618_CL001_HB01_Rescan_002.czi').expanduser()
 czi = aicspylibczi.CziFile(mosaic_file)
 
 # Get the shape of the data
@@ -105,7 +105,7 @@ pip install aicspylibczi
 ## Documentation
 
 Documentation is available at 
-[github.io](https://allencellmodeling.github.io/pylibczi) and 
+[github.io](https://allencellmodeling.github.io/aicspylibczi) and 
 [readthedocs](https://aicspylibczi.readthedocs.io/en/latest/index.html). 
 
 ## Build
