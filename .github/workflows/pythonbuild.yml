@@ -23,7 +23,7 @@ jobs:
           pip install .[test]
       - name: Test with pytest
         run: |
-          pytest -n1 --cov-report xml --cov=pylibczi aicspylibczi/tests
+          pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
           codecov -t ${{ secrets.CodeCovKey }}
 
   lint:
