@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - rename/aicspylibczi
-      - release/aicspylibczi
     tags:
       - 'docs'
 
@@ -31,6 +30,7 @@ jobs:
           cd cmake_build_debug
           cmake ..
           cmake --build . --target docs
+        shell: bash
       - name: Publish Docs
         uses: JamesIves/github-pages-deploy-action-python@releases/v3
         with:
