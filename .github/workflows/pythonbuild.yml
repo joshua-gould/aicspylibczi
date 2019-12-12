@@ -24,7 +24,7 @@ jobs:
       - name: Test with pytest
         run: |
           pwd
-          ls aicspylibczi/test/resources
+          ls aicspylibczi/tests/resources
           pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
           codecov -t ${{ secrets.CodeCovKey }}
 
