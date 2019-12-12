@@ -41,7 +41,7 @@ test_requirements = [
     "pytest-cov",
     "pytest-raises",
     "pytest-xdist",
-    "Sphinx>=2.1.0b1",
+    "Sphinx>=2.2.0b1",
     "sphinx_rtd_theme>=0.1.2",
 ]
 
@@ -55,7 +55,7 @@ dev_requirements = [
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
     "pytest-runner>=4.4",
-    "Sphinx>=2.1.0b1",
+    "Sphinx>=2.2.0b1",
     "sphinx_rtd_theme>=0.1.2",
     "breathe",
     "tox>=3.5.2",
@@ -139,7 +139,7 @@ setup(
     name='aicspylibczi',
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version='2.1.0',
+    version='2.2.0',
     author='Jamie Sherman, Paul Watkins',
     author_email='jamies@alleninstitute.org, pwatkins@gmail.com',
     description='A python module and a python extension for Zeiss (CZI/ZISRAW) microscopy files.',
