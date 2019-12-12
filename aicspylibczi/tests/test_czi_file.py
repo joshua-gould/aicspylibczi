@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 from aicspylibczi import CziFile
 from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
 
@@ -8,6 +9,7 @@ from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
     pytest.param(False, marks=pytest.mark.raises(exception=IsADirectoryError))
 ])
 def test_is_a_directory(data_dir, as_string):
+    print(f"This is the test file path: {Path(__file__)}")
     infile = data_dir
     if as_string:
         infile = str(data_dir)
