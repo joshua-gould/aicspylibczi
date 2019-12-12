@@ -251,7 +251,7 @@ class CziFile(object):
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
         return self.reader.read_meta_from_subblock(plane_constraints, m_index)
 
-    def read_image(self, m_index: int = -1, **kwargs):
+    def read_image(self, **kwargs):
         """
         Read the subblocks in the CZI file and for any subblocks that match all the constraints in kwargs return
         that data. This allows you to select channels/scenes/time-points/Z-slices etc. Note if the optional
@@ -275,6 +275,7 @@ class CziFile(object):
                  I = 6   # The I-dimension ("illumination").
                  H = 7   # The H-dimension ("phase").
                  V = 8   # The V-dimension ("view").
+                 M = 10  # The M_index, this is only valid for Mosaic files!
 
                  split_bgr = True | False
 
@@ -289,6 +290,13 @@ class CziFile(object):
         """
         plane_constraints = self.czilib.DimCoord()
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
+        m_index = -1
+        if 'M' in kwargs:
+            if not self.is_mosaic():
+                raise self.czilib.PylibCZI_CDimCoordinatesOverspecifiedException(
+                    "M Dimension is specified but the file is not a mosaic file!"
+                )
+            m_index = kwargs.get('M')
         split_bgr = False
         if 'split_bgr' in kwargs:
             split_bgr = kwargs.get('split_bgr')
