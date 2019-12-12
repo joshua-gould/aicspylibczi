@@ -23,14 +23,13 @@ jobs:
           pip install --upgrade pip
           pip install .[dev]
       - name: Generate Docs
-        with:
+        env:
           BUILD_DOCS: true
         run: |
           mkdir cmake_build_debug
           cd cmake_build_debug
           cmake ..
           cmake --build . --target docs
-        shell: bash
       - name: Publish Docs
         uses: JamesIves/github-pages-deploy-action-python@releases/v3
         with:
