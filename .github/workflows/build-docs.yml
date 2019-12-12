@@ -14,29 +14,12 @@ jobs:
       - uses: actions/checkout@v1
         with:
           submodules: true
-      - name: Setup Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.7
-      - name: Install Depenencies
-        run: |
-          pip install --upgrade pip
-          pip install .[dev]
-      - name: Generate Docs
+      - name: Build & Publish Docs
+        uses: JacksonMaxfield/github-pages-deploy-action-python@master
         env:
           BUILD_DOCS: true
-        run: |
-          mkdir cmake_build_debug
-          cd cmake_build_debug
-          cmake ..
-          cmake --build . --target docs
-          cd docs/html
-          pwd
-        shell: bash
-      - name: Publish Docs
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BASE_BRANCH: rename/aicspylibczi
           BRANCH: gh-pages
           FOLDER: cmake-build-debug/docs/html
+          BUILD_SCRIPT: pip install .[dev] && mkdir cmake-build-debug && cd cmake-build-debug && cmake .. && cmake --build . --target docs
