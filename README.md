@@ -16,7 +16,7 @@ The first example show how to work with a standard CZI file (Single or Multe-Sce
 import numpy as np
 from aicspylibczi import CziFile
 from pathlib import Path
-from PIL import Image
+import matplotlib.pyplot as plt
 
 pth = Path('20190610_S02-02.czi')
 czi = CziFile(pth)
@@ -70,6 +70,7 @@ import numpy as np
 import aicspylibczi
 import pathlib
 from PIL import Image
+
 
 mosaic_file = pathlib.Path('20190618_CL001_HB01_Rescan_002.czi').expanduser()
 czi = aicspylibczi.CziFile(mosaic_file)
@@ -135,3 +136,11 @@ ModuleNotFoundError: No module named 'encodings'
 
 The GPLv3 license is a consequence of libCZI which imposes GPLv3. If you wish to use libCZI or this derivative in
 a commercial product you'll need to talk to Zeiss.
+
+## History
+
+aicspylibczi was originally a fork of [pylibczi](https:://github.com/elhuhdron/pylibczi) that was developed by 
+Paul Watkins and focused on mSEM data. In attempting to extend the work to we transitioned 
+to pybind11, implemented c++ and python tests, added continuous integration via github actions, 
+and added the functionality to read individual subblocks and stacks of subblocks as a numpy.ndarray. 
+Metadata reading, including specific subblock metadata reading has also been added.  
