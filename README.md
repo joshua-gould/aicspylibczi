@@ -62,7 +62,7 @@ plt.figure(figsize=(10,10))
 plt.imshow(cmy)
 plt.axis('off')
 ```
-![Colony Image](images/cardio.png)
+![Cardio Image](images/cardio.png)
 
 #### Example 2:  Read in a mosaic file 
 ```python

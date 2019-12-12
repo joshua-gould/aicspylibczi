@@ -47,7 +47,7 @@ set(IMAGE_DIR "${CMAKE_CURRENT_BINARY_DIR}/html/images")
 
 make_directory(${IMAGE_DIR})
 
-set(IMAGES ${CMAKE_SOURCE_DIR}/images/colony.png ${CMAKE_SOURCE_DIR}/images/mosaic.png)
+set(IMAGES ${CMAKE_SOURCE_DIR}/images/cardio.png ${CMAKE_SOURCE_DIR}/images/mosaic.png)
 
 add_custom_command(TARGET docs POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${IMAGES} ${IMAGE_DIR})
 
