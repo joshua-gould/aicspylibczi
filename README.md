@@ -96,7 +96,7 @@ img = Image.fromarray(normed_mosaic_data.astype(np.uint8))
 ## Installation
 
 The preferred installation method is with `pip install`.
-This will install the pylibczi python module and extension binaries ([hosted on PyPI](https://pypi.org/project/pylibczi/)):
+This will install the aicspylibczi python module and extension binaries ([hosted on PyPI](https://pypi.org/project/aicspylibczi/)):
 
 `
 pip install aicspylibczi
@@ -122,7 +122,7 @@ Use these steps to build and install aicspylibczi locally:
     pip install -e .[dev] # for development (-e means editable so changes take effect when made)
     pip install .[all] # for everything including jupyter notebook to work with the Example_Usage above
     ```
-  * libCZI is automatically built as a submodule and linked statically into pylibczi.
+  * libCZI is automatically built as a submodule and linked statically into aicspylibczi.
 * Note: If you get the message directly below on windows you need to set PYTHONHOME to be the folder the python.exe you are compiling against lives in.
  ```
 EXEC : Fatal Python error : initfsencoding: unable to load the file system codec ... 
