@@ -41,7 +41,6 @@ namespace pylibczi {
           m_statistics.sceneBoundingBoxes.end(),
           [&](const auto& bbox_) {
               if (!m_specifyScene && (bbox_.second.boundingBoxLayer0.w!=kept.w || bbox_.second.boundingBoxLayer0.h!=kept.h)) {
-                  std::cout << "WARNING: Scene must be specified for this file!" << std::endl;
                   m_specifyScene = true;
               }
           });
@@ -164,7 +163,7 @@ namespace pylibczi {
       int pos;
       if (m_specifyScene && !plane_coord_.TryGetPosition(libCZI::DimensionIndex::S, &pos)) {
           throw ImageAccessUnderspecifiedException(0, 1, "Scenes must be read individually "
-                                                         "for this file, scenes have inconsistent YX shapes!""Scene");
+                                                         "for this file, scenes have inconsistent YX shapes!");
       }
       SubblockSortable subblocksToFind(&plane_coord_, index_m_, isMosaic());
       SubblockIndexVec matches = getMatches(subblocksToFind);
