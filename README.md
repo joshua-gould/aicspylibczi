@@ -1,7 +1,7 @@
 # aicspylibczi
 [![C++ Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/C%2B%2B%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
 [![Python Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/Python%20Master%20Build/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
-[![codecov](https://codecov.io/gh/AllenCellModeling/aicspylibczi/branch/feature/pybind11/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicspylibczi)
+[![codecov](https://codecov.io/gh/AllenCellModeling/aicspylibczi/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicspylibczi)
 [![License: BSD3/GPLv3](https://img.shields.io/badge/License-BSD3/GPLv3-blue.svg)](https://github.com/AllenCellModeling/aicspylibczi/blob/master/LICENSE)
 
 Python module to expose [libCZI](https://github.com/zeiss-microscopy/libCZI) functionality for reading (subset of) Zeiss CZI files and meta-data.
