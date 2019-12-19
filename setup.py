@@ -25,7 +25,7 @@ test_requirements = [
     "pytest-cov",
     "pytest-raises",
     "pytest-xdist",
-    "Sphinx>=2.3.1b1",
+    "Sphinx>=2.3.0",
     "sphinx_rtd_theme>=0.1.2",
 ]
 
