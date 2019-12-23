@@ -104,8 +104,8 @@ pip install aicspylibczi
 ## Documentation
 
 Documentation is available at 
-[github.io](https://allencellmodeling.github.io/aicspylibczi) and 
-[readthedocs](https://aicspylibczi.readthedocs.io/en/latest/index.html). 
+[github.io](https://allencellmodeling.github.io/aicspylibczi).
+
 
 ## Build
 
