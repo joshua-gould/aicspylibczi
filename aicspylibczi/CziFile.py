@@ -109,6 +109,17 @@ class CziFile(object):
         """
         return self.reader.read_dims()
 
+    @property
+    def pixel_type(self):
+        """
+        The pixelType of the images. If the pixelType is different in the different subblocks it returns Invalid.
+
+        Returns
+        -------
+        A string containing the name of the type of each pixel. If inconsistent it returns invalid.
+        """
+        return self.reader.pixel_type()
+
     def scene_bounding_box(self, index: int = -1):
         """
         Get the bounding box of the raw collected data (pyramid 0) from the czifile. if not specified it defaults to
@@ -291,6 +302,11 @@ class CziFile(object):
             [('S', 1), ('T', 1), ('C', 2), ('Z', 25), ('Y', 1024), ('X', 1024)]
             so if you probed the numpy.ndarray with .shape you would get (1, 1, 2, 25, 1024, 1024).
 
+        Notes
+        -----
+        The M Dimension is a representation of the m_index used inside libCZI. Unfortunately this can be sparsely
+        packed for a given selection which causes problems when indexing memory. Consequently the M Dimension may
+        not match the m_index that is being used in libCZI or displayed in Zeiss' Zen software.
         """
         plane_constraints = self.czilib.DimCoord()
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
