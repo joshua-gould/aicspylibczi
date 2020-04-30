@@ -1,4 +1,5 @@
 import io
+from lxml import etree
 import numpy as np
 import pytest
 
@@ -201,6 +202,26 @@ def test_read_subblock_meta(data_dir, fname, expected):
         czi = CziFile(czi_filename=fp)
         data = czi.read_subblock_metadata()
         assert expected in data[0][1]
+
+
+@pytest.mark.parametrize("fname, expected", [
+    ('s_1_t_1_c_1_z_1.czi', b'<Subblocks><Subblock B="0" C="0" S="0"><METADATA><Tags><AcquisitionTime>'
+                            b'2019-06-27T18:33:41.1154211Z'
+                            b'</AcquisitionTime><DetectorState><CameraState Id=""><CameraDisplayName>Camera 2 Left'
+                            b'</CameraDisplayName><ApplyCameraProfile>false</ApplyCameraProfile><ApplyImageOrientation>'
+                            b'true</ApplyImageOrientation><ExposureTime>10004210.526316</ExposureTime><Frame>'
+                            b'100,376,1900,1300</Frame><ImageOrientation>3</ImageOrientation></CameraState>'
+                            b'</DetectorState><StageXPosition>+000000043427.9820</StageXPosition><StageYPosition>'
+                            b'+000000042720.2960</StageYPosition><FocusPosition>+000000009801.2900</FocusPosition>'
+                            b'<RoiCenterOffsetX>+000000000007.0420</RoiCenterOffsetX><RoiCenterOffsetY>'
+                            b'+000000000000.5420</RoiCenterOffsetY></Tags><DataSchema><ValidBitsPerPixel>16'
+                            b'</ValidBitsPerPixel></DataSchema><AttachmentSchema/></METADATA></Subblock></Subblocks>'),
+])
+def test_read_unified_subblock_meta(data_dir, fname, expected):
+    with open(data_dir / fname, 'rb') as fp:
+        czi = CziFile(czi_filename=fp)
+        data = czi.read_subblock_metadata(unified_xml=True)
+        assert expected in etree.tostring(data)
 
 
 @pytest.mark.parametrize("fname, expects", [

@@ -222,12 +222,12 @@ class CziFile(object):
     @property
     def meta(self):
         """
-        Extract all metadata from czifile.
+        Extract the metadata block from the czi file.
 
         Returns
         -------
-        lxml.etree
-            metadata as an xml etree
+        str
+            An lxml.etree of the metadata as a string
 
         """
         if self.meta_root is None:
@@ -240,12 +240,15 @@ class CziFile(object):
                 file.write(metastr)
         return self.meta_root
 
-    def read_subblock_metadata(self, **kwargs):
+    def read_subblock_metadata(self, unified_xml: bool = False, **kwargs):
         """
         Read the subblock specific metadata, ie time subblock was acquired / position at acquisition time etc.
 
         Parameters
         ----------
+        unified_xml: bool
+            If True return a single unified xml tree containing the requested subblock.
+            If False return a list of tuples (dims, xml)
         kwargs
             The keywords below allow you to specify the dimensions that you wish to match. If you
             under-specify the constraints you can easily end up with a massive image stack.
@@ -261,15 +264,27 @@ class CziFile(object):
 
         Returns
         -------
-        [str]
-            an array of stings containing the specified subblock metadata
-
+        [(dict, str)] if unified_xml is False
+            an array of tuples containing a dimension dictionary and the corresponding subblock metadata
+        lxml.etree.Element if unified_xml is True
+            an lxml document containing the requested subblock metadata.
         """
         plane_constraints = self.czilib.DimCoord()
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
         m_index = self._get_m_index_from_kwargs(kwargs)
-
-        return self.reader.read_meta_from_subblock(plane_constraints, m_index)
+        subblock_meta = self.reader.read_meta_from_subblock(plane_constraints, m_index)
+        if not unified_xml:
+            return subblock_meta
+        root = etree.Element("Subblocks")
+        for pair in subblock_meta:
+            new_element = etree.Element("Subblock")
+            for dim, number in pair[0].items():
+                new_element.set(dim, str(number))
+            if 'S' not in pair[0]:
+                new_element.set('S', "0")
+            new_element.append(etree.XML(pair[1]))
+            root.append(new_element)
+        return root
 
     def read_subblock_rect(self, **kwargs):
         """
