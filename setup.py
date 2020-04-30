@@ -25,8 +25,6 @@ test_requirements = [
     "pytest-cov",
     "pytest-raises",
     "pytest-xdist",
-    "Sphinx>=2.3.0,<3",
-    "sphinx_rtd_theme>=0.1.2",
 ]
 
 dev_requirements = [
@@ -39,7 +37,7 @@ dev_requirements = [
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
     "pytest-runner>=4.4",
-    "Sphinx>=2.3.0",
+    "Sphinx>=2.3.0,<3",
     "sphinx_rtd_theme>=0.1.2",
     "breathe",
     "tox>=3.5.2",
