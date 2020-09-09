@@ -14,6 +14,7 @@
 #include "Image.h"
 #include "SubblockSortable.h"
 #include "SubblockMetaVec.h"
+#include "ImagesContainer.h"
 
 /*! \mainpage libCZI_c++_extension
  *
@@ -92,7 +93,7 @@ namespace pylibczi {
       using DimIndexRangeMap = std::map<DimIndex, std::pair<int, int> >;
       using DimensionRangeMap = std::map<char, std::pair<int, int> >;
       using Shape = std::vector<std::pair<char, size_t> >;
-      using DimsShape = std::vector< DimIndexRangeMap >;
+      using DimsShape = std::vector<DimIndexRangeMap>;
 
       /*!
        * @brief Construct the Reader and load the file statistics (dimensions etc)
@@ -199,7 +200,8 @@ namespace pylibczi {
        * @param plane_coord_ A structure containing the Dimension constraints
        * @param index_m_ Is only relevant for mosaic files, if you wish to select one frame.
        */
-      std::pair<ImageVector, Shape> readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
+      std::pair<ImagesContainerBase::ImagesContainerBasePtr, std::vector<std::pair<char, size_t> > >
+      readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
 
       /*!
        * @brief provide the subblock metadata in index order consistent with readSelected.
@@ -222,7 +224,7 @@ namespace pylibczi {
        * @param plane_coord_ A class constraining the data to an individual plane.
        * @param scale_factor_ (optional) The native size for mosaic files can be huge the scale factor allows one to get something back of a more reasonable size. The default is 0.1 meaning 10% of the native image.
        * @param im_box_ (optional) The {x0, y0, width, height} of a sub-region, the default is the whole image.
-       * @return an ImageVector of shared pointers containing an ImageBC*. See description of Image<> and ImageBC.
+       * @return an ImagesContainerBasePtr containing the raw memory, a list of images, and a list of corresponding dimensions
        *
        * @code
        *    FILE *fp = std::fopen("mosaicfile.czi", "rb");
@@ -238,7 +240,7 @@ namespace pylibczi {
        *    }
        * @endcode
        */
-      ImageVector
+      ImagesContainerBase::ImagesContainerBasePtr
       readMosaic(libCZI::CDimCoordinate plane_coord_, float scale_factor_ = 1.0, libCZI::IntRect im_box_ = {0, 0, -1, -1});
       // changed from {.w=-1, .h=-1} to above to support MSVC and GCC - lagging on C++14 std
 
@@ -277,8 +279,10 @@ namespace pylibczi {
        */
       libCZI::IntRect getSceneYXSize(int scene_index_ = -1);
 
-      std::string pixelType() const {
+      std::string pixelType()
+      {
           // each subblock can apparently have a different pixelType 🙄
+          if (m_pixelType==libCZI::PixelType::Invalid) m_pixelType = getFirstPixelType();
           return libCZI::Utils::PixelTypeToInformalString(m_pixelType);
       }
 
@@ -286,16 +290,18 @@ namespace pylibczi {
 
       Reader::SubblockIndexVec getMatches(SubblockSortable& match_);
 
-      void addOrderMapping();
-
       static bool isPyramid0(const libCZI::SubBlockInfo& info_)
       {
           return (info_.logicalRect.w==info_.physicalSize.w && info_.logicalRect.h==info_.physicalSize.h);
       }
 
+      void getMemory(SubblockIndexVec& matches_);
+
       static bool isValidRegion(const libCZI::IntRect& in_box_, const libCZI::IntRect& czi_box_);
 
       void checkSceneShapes(void);
+
+      libCZI::PixelType getFirstPixelType(void);
   };
 
 }
