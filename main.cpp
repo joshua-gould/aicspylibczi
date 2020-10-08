@@ -24,8 +24,7 @@ main(int argc, char *argv[]){
 
     pylibczi::Reader czi( wide.c_str() ); // L"/Users/jamies/Data/s_1_t_10_c_3_z_1.czi");
 
-    libCZI::CDimCoordinate dm = libCZI::CDimCoordinate{{libCZI::DimensionIndex::B, 0},
-                                                       {libCZI::DimensionIndex::S, 0}};
+    libCZI::CDimCoordinate dm = libCZI::CDimCoordinate{{libCZI::DimensionIndex::B, 0}};
 
     std::cout << "Dims: " << czi.dimsString() << std::endl;
     auto dSizes = czi.dimSizes();
@@ -41,7 +40,7 @@ main(int argc, char *argv[]){
     auto done = std::chrono::high_resolution_clock::now();
 
 
-    std::cout << "Duration(milliseconds): " << std::chrono::duration_cast<std::chrono::milliseconds>(done-start).count();
+    std::cout << "Duration(milliseconds): " << std::chrono::duration_cast<std::chrono::milliseconds>(done-start).count() << std::endl;
 
     return 0;
 }

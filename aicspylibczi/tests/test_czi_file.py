@@ -273,3 +273,7 @@ def test_subblock_rect(data_dir, fname, s_index, m_index, expected):
         args = {'S': s_index} if m_index < 0 else {'S': s_index, 'M': m_index}
         data = czi.read_subblock_rect(**args)
         assert data == expected
+
+
+def test_cores_arg():
+    assert CziFile._get_cores_from_kwargs({'cores': 4}) == 4

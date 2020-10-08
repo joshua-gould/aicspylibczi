@@ -5,7 +5,6 @@
 #include <set>
 
 #include "pb_helpers.h"
-#include "Image.h"
 #include "Reader.h"
 #include "exceptions.h"
 
@@ -31,7 +30,7 @@ namespace pb_helpers {
       }
       return charSizes;
   }
-  
+
   py::array packArray(pylibczi::ImagesContainerBase::ImagesContainerBasePtr &base_ptr_)
   {
       pylibczi::ImagesContainerBase *icBase = base_ptr_.release();
@@ -56,6 +55,10 @@ namespace pb_helpers {
       case libCZI::PixelType::Bgr96Float:
           arr = memoryToNpArray<float>(icBase, charSizes);
           break;
+      default:
+          throw pylibczi::PixelTypeException(icBase->pixelType(), "Unsupported pixel type in helper function.");
+          // It is highly unlikely the this throw would ever be reached but it's here for completeness. If an unsupported
+          // pixel type were encountered it would throw much eariler in the code.
       }
       return *arr;
   }

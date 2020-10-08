@@ -22,21 +22,21 @@
 
 #pragma once
 
-#if  defined(_WIN32) || defined(_WIN64)
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#if defined(_WIN32) || defined(_WIN64)
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define NOMINMAX
 // Windows Header Files:
 #include <windows.h>
 #endif
 
-#include "libCZI/libCZI.h"
 #include "libCZI/CZIReader.h"
+#include "libCZI/libCZI.h"
 
 #include "libCZI/splines.h"
 
+#include "libCZI/BitmapOperations.h"
 #include "libCZI/bitmapData.h"
 #include "libCZI/stdAllocator.h"
-#include "libCZI/BitmapOperations.h"
 
 #include "libCZI/CziSubBlockDirectory.h"
 #include "libCZI/StreamImpl.h"

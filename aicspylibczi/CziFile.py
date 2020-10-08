@@ -1,6 +1,7 @@
 # Parent class for python wrapper to libczi file for accessing Zeiss czi image and metadata.
 
 import io
+import multiprocessing
 from pathlib import Path
 from typing import BinaryIO, Tuple, Union
 
@@ -341,6 +342,8 @@ class CziFile(object):
                  H = 7   # The H-dimension ("phase").
                  V = 8   # The V-dimension ("view").
                  M = 10  # The M_index, this is only valid for Mosaic files!
+            Specify the number of cores to use for multithreading with cores.
+                cores = 3 # use 3 cores for threaded reading of the image.
 
         Returns
         -------
@@ -359,8 +362,9 @@ class CziFile(object):
         plane_constraints = self.czilib.DimCoord()
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
         m_index = self._get_m_index_from_kwargs(kwargs)
+        cores = self._get_cores_from_kwargs(kwargs)
 
-        image, shape = self.reader.read_selected(plane_constraints, m_index)
+        image, shape = self.reader.read_selected(plane_constraints, m_index, cores)
         return image, shape
 
     def read_mosaic_size(self):
@@ -445,3 +449,10 @@ class CziFile(object):
                 )
             m_index = kwargs.get('M')
         return m_index
+
+    @staticmethod
+    def _get_cores_from_kwargs(kwargs):
+        cores = multiprocessing.cpu_count() - 1
+        if 'cores' in kwargs:
+            cores = kwargs.get('cores')
+        return cores

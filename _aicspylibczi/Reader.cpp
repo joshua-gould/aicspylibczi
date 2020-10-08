@@ -1,3 +1,4 @@
+#include <thread>
 #include <tuple>
 #include <set>
 #include <utility>
@@ -7,10 +8,13 @@
 #include "ImageFactory.h"
 #include "ImagesContainer.h"
 #include "exceptions.h"
+#include "StreamImplLockingRead.h"
 #include "SubblockMetaVec.h"
+#include "Threadpool.h"
 
 namespace pylibczi {
 
+  // this ISteam type needs to be threadsafe like StreamImplLockingRead the examples in libCZI are not threadsafe
   Reader::Reader(std::shared_ptr<libCZI::IStream> istream_)
       :m_czireader(new CCZIReader), m_specifyScene(true)
   {
@@ -27,7 +31,7 @@ namespace pylibczi {
       :m_czireader(new CCZIReader), m_specifyScene(true)
   {
       std::shared_ptr<libCZI::IStream> sp;
-      sp = std::shared_ptr<libCZI::IStream>(new CSimpleStreamImplCppStreams(file_name_));
+      sp = std::shared_ptr<libCZI::IStream>(new StreamImplLockingRead(file_name_));
       m_czireader->Open(sp);
       m_statistics = m_czireader->GetStatistics();
       // create a reference for finding one or more subblock indices from a CDimCoordinate
@@ -245,7 +249,7 @@ namespace pylibczi {
   }
 
   std::pair<ImagesContainerBase::ImagesContainerBasePtr, std::vector<std::pair<char, size_t> > >
-  Reader::readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_)
+  Reader::readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_, unsigned int cores_)
   {
       int pos;
       if (m_specifyScene && !plane_coord_.TryGetPosition(libCZI::DimensionIndex::S, &pos)) {
@@ -263,18 +267,43 @@ namespace pylibczi {
 
       imageFactory.setMosaic(isMosaic());
       size_t memOffset = 0;
-      for_each(matches.begin(), matches.end(), [&](const SubblockIndexVec::value_type& match_) {
-          auto subblock = m_czireader->ReadSubBlock(match_.second);
-          const libCZI::SubBlockInfo& info = subblock->GetSubBlockInfo();
-          if (m_pixelType!=info.pixelType)
-              throw PixelTypeException(info.pixelType, "Selected subblocks have inconsistent PixelTypes."
-                                                       " You must select subblocks with consistent PixelTypes.");
 
-          imageFactory.constructImage(subblock->CreateBitmap(),
-              &info.coordinate, info.logicalRect, memOffset, info.mIndex);
+      unsigned int number_of_cores = std::thread::hardware_concurrency();
+      if (number_of_cores - 1 < cores_) {
+          std::cout << "Cores exception requested " << cores_ << " but only " << number_of_cores << " available." << std::endl;
+          throw ThreadingRequestedCoresException(number_of_cores, cores_,
+              "Requested cores should be at most 1 less than the number of available cores.");
+      }
+      {
+          std::vector< std::future<bool> > jobs;
+          Tasks tasks;
+          for_each(matches.begin(), matches.end(), [&](const SubblockIndexVec::value_type match_) {
+              int sb_index = match_.second;
 
-          memOffset += bgrScaling*w_by_h.w*w_by_h.h;
-      });
+              jobs.push_back(tasks.queue([this, &imageFactory, sb_index, memOffset]()->bool {
+                  auto subblock = m_czireader->ReadSubBlock(sb_index);
+                  const libCZI::SubBlockInfo& info = subblock->GetSubBlockInfo();
+                  if (m_pixelType!=info.pixelType)
+                      throw PixelTypeException(info.pixelType, "Selected subblocks have inconsistent PixelTypes."
+                                                               " You must select subblocks with consistent PixelTypes.");
+                  // the throw above covers a possible edge case which the file has multiple pixel types. If this is
+                  // the case the exception is intentionally sent back to the user to deal with as they will have to
+                  // select subblocks with consistent pixelType. There's no way to know which of the conflicting
+                  // types they wanted.
+
+                  auto bitmap = subblock->CreateBitmap();
+                  libCZI::IntSize size = bitmap->GetSize();
+
+                  imageFactory.constructImage(bitmap, size,
+                      &info.coordinate, info.logicalRect, memOffset, info.mIndex);
+                  return true;
+              }));
+
+              memOffset += bgrScaling*w_by_h.w*w_by_h.h;
+          });
+          tasks.start(number_of_cores);
+          for_each( jobs.begin(), jobs.end(), [](auto &x){ x.get(); });
+      }
 
       if (imageFactory.numberOfImages()==0) {
           throw pylibczi::CdimSelectionZeroImagesException(plane_coord_, m_statistics.dimBounds, "No pyramid0 selectable subblocks.");
@@ -404,7 +433,8 @@ namespace pylibczi {
 
       size_t pixels_in_image = m_statistics.boundingBoxLayer0Only.w*m_statistics.boundingBoxLayer0Only.h*bgrScaling;
       ImageFactory imageFactory(m_pixelType, pixels_in_image);
-      imageFactory.constructImage(multiTileComposite, &plane_coord_, im_box_, 0, -1);
+      libCZI::IntSize size = multiTileComposite->GetSize();
+      imageFactory.constructImage(multiTileComposite, size, &plane_coord_, im_box_, 0, -1);
       // set is mosaic?
       return imageFactory.transferMemoryContainer();
   }
