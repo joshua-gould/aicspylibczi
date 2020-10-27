@@ -160,6 +160,26 @@ class CziFile(object):
         box = self.reader.read_scene_wh(index)
         return (box.h, box.w)
 
+    def mosaic_scene_bounding_boxes(self, index: int = -1):
+        """
+        Get the bounding boxes of the raw collected data (pyramid 0) from the mosaic czifile.
+        This retrieves all pyramid 0 bounding boxes if the scene is not defined in the file or if the user
+        calls the function with the default index value.
+
+        Parameters
+        ----------
+        index
+             the scene index, omit and it defaults to all
+
+        Returns
+        -------
+        tuple
+            List[BoundingBox tuples] for the specified scene
+
+        """
+        bboxes = self.reader.read_mosaic_scene_boxes(index, True)
+        return [(bb.x, bb.y, bb.w, bb.h) for bb in bboxes]
+
     @property
     def size(self):
         """

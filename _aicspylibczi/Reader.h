@@ -84,14 +84,12 @@ namespace pylibczi {
 
       std::shared_ptr<CCZIReader> m_czireader; // required for cast in libCZI
       libCZI::SubBlockStatistics m_statistics;
-      std::vector<std::pair<SubblockSortable, int> > m_orderMapping;
       libCZI::PixelType m_pixelType;
       bool m_specifyScene;
 
   public:
       using SubblockIndexVec = std::vector<std::pair<SubblockSortable, int> >;
       using DimIndexRangeMap = std::map<DimIndex, std::pair<int, int> >;
-      using DimensionRangeMap = std::map<char, std::pair<int, int> >;
       using Shape = std::vector<std::pair<char, size_t> >;
       using DimsShape = std::vector<DimIndexRangeMap>;
 
@@ -263,7 +261,10 @@ namespace pylibczi {
        * Get the full size of the mosaic image without scaling. If you're selecting a sub-region it must be within the box returned.
        * @return an IntRect {x, y, w, h}
        */
-      libCZI::IntRect mosaicShape() { return m_statistics.boundingBoxLayer0Only; }
+      libCZI::IntRect mosaicShape()
+      {
+        return m_statistics.boundingBoxLayer0Only;
+      }
 
       /*!
        * @brief get the shape of the loaded images
@@ -271,24 +272,43 @@ namespace pylibczi {
        * @param is_mosaic_ a boolean telling the function if it's a mosaic file
        * @return a vector of (Dimension letter, Dimension size)
        */
-      static Shape getShape(pylibczi::ImageVector& images_, bool is_mosaic_) { return images_.getShape(); }
+      static Shape getShape(pylibczi::ImageVector& images_, bool is_mosaic_)
+      {
+        return images_.getShape();
+      }
 
       /*!
        * @brief get the pyramid 0 (acquired data) shape
-       * @param scene_index_ specifies scene but defaults to the first scene, Scenes can have different sizes
-       * @return libCZI::IntRect containing (x0, y0, w, h)
+       * @param scene_index_ specifies scene but defaults to the first scene,
+       * Scenes can have different sizes
+       * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
        */
-      libCZI::IntRect getSceneYXSize(int scene_index_ = -1);
+      libCZI::IntRect getSceneYXSize(int scene_index_ = -1)
+      {
+        std::vector<libCZI::IntRect> matches = getAllSceneYXSize(scene_index_);
+        return matches.front();
+      }
+
+      /*!
+       * @brief get the pyramid 0 (acquired data) shape
+       * @param scene_index_ specifies scene but defaults to the first scene,
+       * Scenes can have different sizes
+       * @param get_all_matches_ if true return all matching bounding boxes
+       * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+       */
+      std::vector<libCZI::IntRect> getAllSceneYXSize(
+        int scene_index_ = -1,
+        bool get_all_matches_ = false);
 
       std::string pixelType()
       {
-          // each subblock can apparently have a different pixelType 🙄
-          if (m_pixelType==libCZI::PixelType::Invalid) m_pixelType = getFirstPixelType();
-          return libCZI::Utils::PixelTypeToInformalString(m_pixelType);
+        // each subblock can apparently have a different pixelType 🙄
+        if (m_pixelType == libCZI::PixelType::Invalid)
+          m_pixelType = getFirstPixelType();
+        return libCZI::Utils::PixelTypeToInformalString(m_pixelType);
       }
 
-  private:
-
+    private:
       Reader::SubblockIndexVec getMatches(SubblockSortable& match_);
 
       static bool isPyramid0(const libCZI::SubBlockInfo& info_)
