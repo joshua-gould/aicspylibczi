@@ -139,7 +139,7 @@ def test_mosaic_size(data_dir, fname, expected):
     ('s_1_t_1_c_1_z_1.czi', (1, 1, 325, 475)),  # B C Y X
     ('s_3_t_1_c_3_z_5.czi', (1, 3, 3, 5, 325, 475)),  # B S C Z Y X
     ('mosaic_test.czi', (1, 1, 1, 1, 2, 624, 924)),  # S T C Z M Y X
-    ('RGB-8bit.czi', (1, 1, 3, 624, 924)),  # B T C Y X
+    ('RGB-8bit.czi', (1, 3, 624, 924)),  # T C Y X
 ])
 def test_read_image(data_dir, fname, expected):
     czi = CziFile(str(data_dir / fname))
@@ -249,7 +249,7 @@ def test_mosaic_image(data_dir, fname, expects):
 
 
 @pytest.mark.parametrize("fname, expects", [
-    ('mosaic_test.czi', (1, 1, int(624/2), int(1756/2))),
+    ('mosaic_test.czi', (1, int(624/2), int(1756/2))),
 ])
 def test_mosaic_image_two(data_dir, fname, expects):
     with open(data_dir / fname, 'rb') as fp:
@@ -272,4 +272,21 @@ def test_subblock_rect(data_dir, fname, s_index, m_index, expected):
         czi = CziFile(czi_filename=fp)
         args = {'S': s_index} if m_index < 0 else {'S': s_index, 'M': m_index}
         data = czi.read_subblock_rect(**args)
+        assert data == expected
+
+
+def test_cores_arg():
+    assert CziFile._get_cores_from_kwargs({'cores': 4}) == 4
+
+
+@pytest.mark.parametrize("fname, s_index, m_index, expected", [
+    ('s_3_t_1_c_3_z_5.czi', 0, -1, [(39850, 35568, 475, 325)]),
+    ('mosaic_test.czi', 0, 0, [(0, 0, 924, 624), (832, 0, 924, 624)]),
+    ('Multiscene_CZI_3Scenes.czi', 0, 0, [(495412, 354694, 256, 256), (495643, 354694, 256, 256),
+                                          (495643, 354924, 256, 256), (495412, 354924, 256, 256)])
+])
+def test_mosaic_subblock_rect(data_dir, fname, s_index, m_index, expected):
+    with open(data_dir / fname, 'rb') as fp:
+        czi = CziFile(czi_filename=fp)
+        data = czi.mosaic_scene_bounding_boxes(s_index)
         assert data == expected

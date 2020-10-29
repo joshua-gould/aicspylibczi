@@ -1,6 +1,7 @@
 # Parent class for python wrapper to libczi file for accessing Zeiss czi image and metadata.
 
 import io
+import multiprocessing
 from pathlib import Path
 from typing import BinaryIO, Tuple, Union
 
@@ -48,7 +49,6 @@ class CziFile(object):
                  verbose: bool = False):
         # Convert to BytesIO (bytestream)
         self._bytes = self.convert_to_buffer(czi_filename)
-        self.czi_filename = None
         self.metafile_out = metafile_out
         self.czifile_verbose = verbose
 
@@ -159,6 +159,26 @@ class CziFile(object):
         """
         box = self.reader.read_scene_wh(index)
         return (box.h, box.w)
+
+    def mosaic_scene_bounding_boxes(self, index: int = -1):
+        """
+        Get the bounding boxes of the raw collected data (pyramid 0) from the mosaic czifile.
+        This retrieves all pyramid 0 bounding boxes if the scene is not defined in the file or if the user
+        calls the function with the default index value.
+
+        Parameters
+        ----------
+        index
+             the scene index, omit and it defaults to all
+
+        Returns
+        -------
+        tuple
+            List[BoundingBox tuples] for the specified scene
+
+        """
+        bboxes = self.reader.read_mosaic_scene_boxes(index, True)
+        return [(bb.x, bb.y, bb.w, bb.h) for bb in bboxes]
 
     @property
     def size(self):
@@ -341,6 +361,8 @@ class CziFile(object):
                  H = 7   # The H-dimension ("phase").
                  V = 8   # The V-dimension ("view").
                  M = 10  # The M_index, this is only valid for Mosaic files!
+            Specify the number of cores to use for multithreading with cores.
+                cores = 3 # use 3 cores for threaded reading of the image.
 
         Returns
         -------
@@ -359,8 +381,9 @@ class CziFile(object):
         plane_constraints = self.czilib.DimCoord()
         [plane_constraints.set_dim(k, v) for (k, v) in kwargs.items() if k in CziFile.ZISRAW_DIMS]
         m_index = self._get_m_index_from_kwargs(kwargs)
+        cores = self._get_cores_from_kwargs(kwargs)
 
-        image, shape = self.reader.read_selected(plane_constraints, m_index)
+        image, shape = self.reader.read_selected(plane_constraints, m_index, cores)
         return image, shape
 
     def read_mosaic_size(self):
@@ -445,3 +468,10 @@ class CziFile(object):
                 )
             m_index = kwargs.get('M')
         return m_index
+
+    @staticmethod
+    def _get_cores_from_kwargs(kwargs):
+        cores = multiprocessing.cpu_count() - 1
+        if 'cores' in kwargs:
+            cores = kwargs.get('cores')
+        return cores

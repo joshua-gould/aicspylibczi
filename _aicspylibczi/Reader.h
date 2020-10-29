@@ -14,6 +14,7 @@
 #include "Image.h"
 #include "SubblockSortable.h"
 #include "SubblockMetaVec.h"
+#include "ImagesContainer.h"
 
 /*! \mainpage libCZI_c++_extension
  *
@@ -83,16 +84,14 @@ namespace pylibczi {
 
       std::shared_ptr<CCZIReader> m_czireader; // required for cast in libCZI
       libCZI::SubBlockStatistics m_statistics;
-      std::vector<std::pair<SubblockSortable, int> > m_orderMapping;
       libCZI::PixelType m_pixelType;
       bool m_specifyScene;
 
   public:
       using SubblockIndexVec = std::vector<std::pair<SubblockSortable, int> >;
       using DimIndexRangeMap = std::map<DimIndex, std::pair<int, int> >;
-      using DimensionRangeMap = std::map<char, std::pair<int, int> >;
       using Shape = std::vector<std::pair<char, size_t> >;
-      using DimsShape = std::vector< DimIndexRangeMap >;
+      using DimsShape = std::vector<DimIndexRangeMap>;
 
       /*!
        * @brief Construct the Reader and load the file statistics (dimensions etc)
@@ -199,12 +198,14 @@ namespace pylibczi {
        * @param plane_coord_ A structure containing the Dimension constraints
        * @param index_m_ Is only relevant for mosaic files, if you wish to select one frame.
        */
-      std::pair<ImageVector, Shape> readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
+      std::pair<ImagesContainerBase::ImagesContainerBasePtr, std::vector< std::pair<char, size_t> > >
+      readSelected(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1, unsigned int cores_=3);
 
       /*!
        * @brief provide the subblock metadata in index order consistent with readSelected.
        * @param plane_coord_ A structure containing the Dimension constraints
        * @param index_m_ Is only relevant for mosaic files, if you wish to select one frame.
+       * @param cores_ The number of cores to use to process threads
        * @return a vector of metadata string blocks
        */
       SubblockMetaVec readSubblockMeta(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
@@ -222,7 +223,7 @@ namespace pylibczi {
        * @param plane_coord_ A class constraining the data to an individual plane.
        * @param scale_factor_ (optional) The native size for mosaic files can be huge the scale factor allows one to get something back of a more reasonable size. The default is 0.1 meaning 10% of the native image.
        * @param im_box_ (optional) The {x0, y0, width, height} of a sub-region, the default is the whole image.
-       * @return an ImageVector of shared pointers containing an ImageBC*. See description of Image<> and ImageBC.
+       * @return an ImagesContainerBasePtr containing the raw memory, a list of images, and a list of corresponding dimensions
        *
        * @code
        *    FILE *fp = std::fopen("mosaicfile.czi", "rb");
@@ -238,7 +239,7 @@ namespace pylibczi {
        *    }
        * @endcode
        */
-      ImageVector
+      ImagesContainerBase::ImagesContainerBasePtr
       readMosaic(libCZI::CDimCoordinate plane_coord_, float scale_factor_ = 1.0, libCZI::IntRect im_box_ = {0, 0, -1, -1});
       // changed from {.w=-1, .h=-1} to above to support MSVC and GCC - lagging on C++14 std
 
@@ -260,7 +261,10 @@ namespace pylibczi {
        * Get the full size of the mosaic image without scaling. If you're selecting a sub-region it must be within the box returned.
        * @return an IntRect {x, y, w, h}
        */
-      libCZI::IntRect mosaicShape() { return m_statistics.boundingBoxLayer0Only; }
+      libCZI::IntRect mosaicShape()
+      {
+        return m_statistics.boundingBoxLayer0Only;
+      }
 
       /*!
        * @brief get the shape of the loaded images
@@ -268,34 +272,57 @@ namespace pylibczi {
        * @param is_mosaic_ a boolean telling the function if it's a mosaic file
        * @return a vector of (Dimension letter, Dimension size)
        */
-      static Shape getShape(pylibczi::ImageVector& images_, bool is_mosaic_) { return images_.getShape(); }
+      static Shape getShape(pylibczi::ImageVector& images_, bool is_mosaic_)
+      {
+        return images_.getShape();
+      }
 
       /*!
        * @brief get the pyramid 0 (acquired data) shape
-       * @param scene_index_ specifies scene but defaults to the first scene, Scenes can have different sizes
-       * @return libCZI::IntRect containing (x0, y0, w, h)
+       * @param scene_index_ specifies scene but defaults to the first scene,
+       * Scenes can have different sizes
+       * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
        */
-      libCZI::IntRect getSceneYXSize(int scene_index_ = -1);
-
-      std::string pixelType() const {
-          // each subblock can apparently have a different pixelType 🙄
-          return libCZI::Utils::PixelTypeToInformalString(m_pixelType);
+      libCZI::IntRect getSceneYXSize(int scene_index_ = -1)
+      {
+        std::vector<libCZI::IntRect> matches = getAllSceneYXSize(scene_index_);
+        return matches.front();
       }
 
-  private:
+      /*!
+       * @brief get the pyramid 0 (acquired data) shape
+       * @param scene_index_ specifies scene but defaults to the first scene,
+       * Scenes can have different sizes
+       * @param get_all_matches_ if true return all matching bounding boxes
+       * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+       */
+      std::vector<libCZI::IntRect> getAllSceneYXSize(
+        int scene_index_ = -1,
+        bool get_all_matches_ = false);
 
+      std::string pixelType()
+      {
+        // each subblock can apparently have a different pixelType 🙄
+        if (m_pixelType == libCZI::PixelType::Invalid)
+          m_pixelType = getFirstPixelType();
+        return libCZI::Utils::PixelTypeToInformalString(m_pixelType);
+      }
+
+    private:
       Reader::SubblockIndexVec getMatches(SubblockSortable& match_);
-
-      void addOrderMapping();
 
       static bool isPyramid0(const libCZI::SubBlockInfo& info_)
       {
           return (info_.logicalRect.w==info_.physicalSize.w && info_.logicalRect.h==info_.physicalSize.h);
       }
 
+      void getMemory(SubblockIndexVec& matches_);
+
       static bool isValidRegion(const libCZI::IntRect& in_box_, const libCZI::IntRect& czi_box_);
 
       void checkSceneShapes(void);
+
+      libCZI::PixelType getFirstPixelType(void);
   };
 
 }

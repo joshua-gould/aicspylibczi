@@ -25,19 +25,19 @@ namespace pylibczi {
            m_pixelsPerStride(pixels_per_stride_) { }
 
       class SourceChannelIterator {
-          std::vector<T*> m_ptr;
+          std::vector<T*> m_channelIterators;
 
       public:
           SourceChannelIterator(size_t number_of_channels_, T* ptr_)
-              :m_ptr(number_of_channels_)
+              :m_channelIterators(number_of_channels_)
           {
-              std::generate(m_ptr.begin(), m_ptr.end(), [ptr_]() mutable { return ptr_++; });
+              std::generate(m_channelIterators.begin(), m_channelIterators.end(), [ptr_]() mutable { return ptr_++; });
           }
 
           SourceChannelIterator& operator++()
           {
-              size_t numberOfChannels = m_ptr.size();
-              std::for_each(m_ptr.begin(), m_ptr.end(),
+              size_t numberOfChannels = m_channelIterators.size();
+              std::for_each(m_channelIterators.begin(), m_channelIterators.end(),
                   [numberOfChannels](T*& p_) { p_ = p_+numberOfChannels; });
               return *this;
           }
@@ -51,7 +51,7 @@ namespace pylibczi {
 
           bool operator==(const SourceChannelIterator& other_) const
           {
-              return *(m_ptr.begin())==*(other_.m_ptr.begin());
+              return *(m_channelIterators.begin())==*(other_.m_channelIterators.begin());
           }
 
           bool operator!=(const SourceChannelIterator& other_) const
@@ -59,9 +59,9 @@ namespace pylibczi {
               return !(*this==other_);
           }
 
-          std::vector<T*> operator*()
+          std::vector<T*> &operator*()
           {
-              return m_ptr;
+              return m_channelIterators;
           }
           // iterator traits
           using difference_type = size_t;
