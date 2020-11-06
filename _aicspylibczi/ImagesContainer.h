@@ -29,8 +29,7 @@ private:
   std::mutex m_mutex;
 
 public:
-  static ImagesContainerBasePtr getTypedAsBase(libCZI::PixelType& pixel_type_,
-                                               size_t pixels_in_all_images_);
+  static ImagesContainerBasePtr getTypedAsBase(libCZI::PixelType& pixel_type_, size_t pixels_in_all_images_);
 
   template<typename T>
   ImagesContainer<T>* getBaseAsTyped(void)
@@ -56,10 +55,7 @@ public:
     return m_shape;
   }
 
-  void setCziFilePixelType(libCZI::PixelType pixel_type_)
-  {
-    m_cziPixelType = pixel_type_;
-  }
+  void setCziFilePixelType(libCZI::PixelType pixel_type_) { m_cziPixelType = pixel_type_; }
 
   libCZI::PixelType pixelType(void) { return m_cziPixelType; }
 };
@@ -75,47 +71,36 @@ public:
     : m_uniquePtr(new T[pixels_in_all_images_])
   {}
 
-  T* getPointerAtIndex(size_t position_ = 0)
-  {
-    return m_uniquePtr.get() + position_;
-  }
+  T* getPointerAtIndex(size_t position_ = 0) { return m_uniquePtr.get() + position_; }
 
   T* releaseMemory(void) { return m_uniquePtr.release(); }
 };
 
 inline ImagesContainerBase::ImagesContainerBasePtr
-ImagesContainerBase::getTypedAsBase(libCZI::PixelType& pixel_type_,
-                                    size_t pixels_in_all_images_)
+ImagesContainerBase::getTypedAsBase(libCZI::PixelType& pixel_type_, size_t pixels_in_all_images_)
 {
   ImagesContainerBasePtr imageMemory;
   switch (pixel_type_) {
     case libCZI::PixelType::Gray8:
-      imageMemory = std::make_unique<ImagesContainer<uint8_t>>(
-        pixel_type_, pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<uint8_t>>(pixel_type_, pixels_in_all_images_);
       break;
     case libCZI::PixelType::Gray16:
-      imageMemory = std::make_unique<ImagesContainer<uint16_t>>(
-        pixel_type_, pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<uint16_t>>(pixel_type_, pixels_in_all_images_);
       break;
     case libCZI::PixelType::Gray32:
-      imageMemory = std::make_unique<ImagesContainer<uint32_t>>(
-        pixel_type_, pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<uint32_t>>(pixel_type_, pixels_in_all_images_);
       break;
     case libCZI::PixelType::Gray32Float:
-      imageMemory = std::make_unique<ImagesContainer<float>>(
-        pixel_type_, pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<float>>(pixel_type_, pixels_in_all_images_);
       break;
     case libCZI::PixelType::Bgr24:
-      imageMemory = std::make_unique<ImagesContainer<uint8_t>>(
-        libCZI::PixelType::Gray8, 3 * pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<uint8_t>>(libCZI::PixelType::Gray8, 3 * pixels_in_all_images_);
       break;
     case libCZI::PixelType::Bgr48:
-      imageMemory = std::make_unique<ImagesContainer<uint16_t>>(
-        libCZI::PixelType::Gray16, 3 * pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<uint16_t>>(libCZI::PixelType::Gray16, 3 * pixels_in_all_images_);
       break;
     case libCZI::PixelType::Bgr96Float:
-      imageMemory = std::make_unique<ImagesContainer<float>>(
-        libCZI::PixelType::Gray32Float, 3 * pixels_in_all_images_);
+      imageMemory = std::make_unique<ImagesContainer<float>>(libCZI::PixelType::Gray32Float, 3 * pixels_in_all_images_);
       break;
     case libCZI::PixelType::Bgra32:
     case libCZI::PixelType::Gray64Float:
@@ -124,8 +109,7 @@ ImagesContainerBase::getTypedAsBase(libCZI::PixelType& pixel_type_,
     case libCZI::PixelType::Invalid:
       throw PixelTypeException(pixel_type_, "unsupported pixel type.");
   }
-  imageMemory->setCziFilePixelType(
-    pixel_type_); // make sure imageMemory has the original pixel type
+  imageMemory->setCziFilePixelType(pixel_type_); // make sure imageMemory has the original pixel type
   return imageMemory;
 }
 

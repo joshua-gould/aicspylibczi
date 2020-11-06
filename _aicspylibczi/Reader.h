@@ -88,7 +88,8 @@ namespace pylibczi {
       bool m_specifyScene;
 
   public:
-      using SubblockIndexVec = std::vector<std::pair<SubblockSortable, int> >;
+      // was vector
+      using SubblockIndexVec = std::set<std::pair<SubblockSortable, int> >;
       using DimIndexRangeMap = std::map<DimIndex, std::pair<int, int> >;
       using Shape = std::vector<std::pair<char, size_t> >;
       using DimsShape = std::vector<DimIndexRangeMap>;

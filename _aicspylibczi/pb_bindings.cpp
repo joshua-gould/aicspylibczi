@@ -18,27 +18,19 @@ PYBIND11_MODULE(_aicspylibczi, m)
 
   namespace py = pybind11;
 
-  m.doc() =
-    "aicspylibczi C++ extension for reading ZISRAW/CZI files"; // optional
-                                                               // module
-                                                               // docstring
+  m.doc() = "aicspylibczi C++ extension for reading ZISRAW/CZI files"; // optional
+                                                                       // module
+                                                                       // docstring
 
-  py::register_exception<pylibczi::FilePtrException>(
-    m, "PylibCZI_BytesIO2FilePtrException");
-  py::register_exception<pylibczi::PixelTypeException>(
-    m, "PylibCZI_PixelTypeException");
-  py::register_exception<pylibczi::RegionSelectionException>(
-    m, "PylibCZI_RegionSelectionException");
-  py::register_exception<pylibczi::ImageAccessUnderspecifiedException>(
-    m, "PylibCZI_ImageAccessUnderspecifiedException");
-  py::register_exception<pylibczi::ImageIteratorException>(
-    m, "PylibCZI_ImageIteratorException");
-  py::register_exception<pylibczi::ImageSplitChannelException>(
-    m, "PylibCZI_ImageSplitChannelException");
-  py::register_exception<pylibczi::ImageCopyAllocFailed>(
-    m, "PylibCZI_ImageCopyAllocFailed");
-  py::register_exception<pylibczi::CdimSelectionZeroImagesException>(
-    m, "PylibCZI_CDimSpecSelectedNoImagesException");
+  py::register_exception<pylibczi::FilePtrException>(m, "PylibCZI_BytesIO2FilePtrException");
+  py::register_exception<pylibczi::PixelTypeException>(m, "PylibCZI_PixelTypeException");
+  py::register_exception<pylibczi::RegionSelectionException>(m, "PylibCZI_RegionSelectionException");
+  py::register_exception<pylibczi::ImageAccessUnderspecifiedException>(m,
+                                                                       "PylibCZI_ImageAccessUnderspecifiedException");
+  py::register_exception<pylibczi::ImageIteratorException>(m, "PylibCZI_ImageIteratorException");
+  py::register_exception<pylibczi::ImageSplitChannelException>(m, "PylibCZI_ImageSplitChannelException");
+  py::register_exception<pylibczi::ImageCopyAllocFailed>(m, "PylibCZI_ImageCopyAllocFailed");
+  py::register_exception<pylibczi::CdimSelectionZeroImagesException>(m, "PylibCZI_CDimSpecSelectedNoImagesException");
   py::register_exception<pylibczi::CDimCoordinatesOverspecifiedException>(
     m, "PylibCZI_CDimCoordinatesOverspecifiedException");
   py::register_exception<pylibczi::CDimCoordinatesUnderspecifiedException>(
@@ -67,9 +59,7 @@ PYBIND11_MODULE(_aicspylibczi, m)
     .def("dim_index", &pylibczi::IndexMap::dimIndex)
     .def("m_index", &pylibczi::IndexMap::mIndex);
 
-  py::class_<libCZI::CDimCoordinate>(m, "DimCoord")
-    .def(py::init<>())
-    .def("set_dim", &libCZI::CDimCoordinate::Set);
+  py::class_<libCZI::CDimCoordinate>(m, "DimCoord").def(py::init<>()).def("set_dim", &libCZI::CDimCoordinate::Set);
 
   py::class_<libCZI::IntRect>(m, "IntRect")
     .def(py::init<>())

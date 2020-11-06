@@ -46,13 +46,10 @@ TEST_CASE("iterator_source_to_target", "[iterator_src_tgt]")
                   sourceRange.strideEnd(i),
                   targetRange.strideBegin(i),
                   [&tgt](std::vector<uint16_t*> a, std::vector<uint16_t*> b) {
-                    pairedForEach(a.begin(),
-                                  a.end(),
-                                  b.begin(),
-                                  [&tgt](uint16_t* s, uint16_t* t) {
-                                    int val = tgt[0];
-                                    *t = *s;
-                                  });
+                    pairedForEach(a.begin(), a.end(), b.begin(), [&tgt](uint16_t* s, uint16_t* t) {
+                      int val = tgt[0];
+                      *t = *s;
+                    });
                   });
   }
   for (int i = 0; i < 60; i++)

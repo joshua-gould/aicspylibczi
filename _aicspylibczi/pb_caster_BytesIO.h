@@ -33,8 +33,7 @@ public:
     int fDesc = PyObject_AsFileDescriptor(source);
     if (fDesc == -1)
       return false;
-    value = std::shared_ptr<libCZI::IStream>(
-      new pb_helpers::CSimpleStreamImplFromFd(fDesc));
+    value = std::shared_ptr<libCZI::IStream>(new pb_helpers::CSimpleStreamImplFromFd(fDesc));
     return (value != nullptr && !PyErr_Occurred());
   }
 
@@ -45,9 +44,7 @@ public:
    * ``return_value_policy::reference_internal``) and are generally
    * ignored by implicit casters.
    */
-  static handle cast(std::shared_ptr<libCZI::IStream> src_,
-                     return_value_policy /* policy */,
-                     handle /* parent */)
+  static handle cast(std::shared_ptr<libCZI::IStream> src_, return_value_policy /* policy */, handle /* parent */)
   {
     /*
      * FROM Python docs https://docs.python.org/3/c-api/file.html
@@ -55,17 +52,9 @@ public:
      * with OS-level file descriptors can produce various issues (such as
      * unexpected ordering of data).
      * */
-    std::cerr
-      << "Conversion from libCZI::IStream to python file stream not defined"
-      << std::endl;
+    std::cerr << "Conversion from libCZI::IStream to python file stream not defined" << std::endl;
     int fDesc = -1; // this is not implemented
-    return PyFile_FromFd(fDesc,
-                         nullptr,
-                         "r",
-                         -1,
-                         nullptr,
-                         nullptr,
-                         nullptr,
+    return PyFile_FromFd(fDesc, nullptr, "r", -1, nullptr, nullptr, nullptr,
                          true); // true close fd on failure
   }
 };

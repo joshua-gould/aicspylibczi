@@ -15,13 +15,8 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint8_t>();
-      return std::shared_ptr<TypedImage<uint8_t>>(
-        new TypedImage<uint8_t>(std::move(shape_),
-                                pixel_type_,
-                                plane_coordinate_,
-                                box_,
-                                typedPtr->getPointerAtIndex(mem_index_),
-                                index_m_));
+      return std::shared_ptr<TypedImage<uint8_t>>(new TypedImage<uint8_t>(
+        std::move(shape_), pixel_type_, plane_coordinate_, box_, typedPtr->getPointerAtIndex(mem_index_), index_m_));
     } },
   { PixelType::Bgr24,
     [](std::vector<size_t> shape_,
@@ -32,13 +27,12 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint8_t>();
-      return std::shared_ptr<TypedImage<uint8_t>>(
-        new TypedImage<uint8_t>(std::move(shape_),
-                                PixelType::Gray8,
-                                plane_coordinate_,
-                                box_,
-                                typedPtr->getPointerAtIndex(mem_index_),
-                                index_m_));
+      return std::shared_ptr<TypedImage<uint8_t>>(new TypedImage<uint8_t>(std::move(shape_),
+                                                                          PixelType::Gray8,
+                                                                          plane_coordinate_,
+                                                                          box_,
+                                                                          typedPtr->getPointerAtIndex(mem_index_),
+                                                                          index_m_));
     } },
   { PixelType::Gray16,
     [](std::vector<size_t> shape_,
@@ -49,13 +43,8 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint16_t>();
-      return std::shared_ptr<TypedImage<uint16_t>>(
-        new TypedImage<uint16_t>(std::move(shape_),
-                                 pixel_type_,
-                                 plane_coordinate_,
-                                 box_,
-                                 typedPtr->getPointerAtIndex(mem_index_),
-                                 index_m_));
+      return std::shared_ptr<TypedImage<uint16_t>>(new TypedImage<uint16_t>(
+        std::move(shape_), pixel_type_, plane_coordinate_, box_, typedPtr->getPointerAtIndex(mem_index_), index_m_));
     } },
   { PixelType::Gray32,
     [](std::vector<size_t> shape_,
@@ -66,13 +55,8 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint32_t>();
-      return std::shared_ptr<TypedImage<uint32_t>>(
-        new TypedImage<uint32_t>(std::move(shape_),
-                                 pixel_type_,
-                                 plane_coordinate_,
-                                 box_,
-                                 typedPtr->getPointerAtIndex(mem_index_),
-                                 index_m_));
+      return std::shared_ptr<TypedImage<uint32_t>>(new TypedImage<uint32_t>(
+        std::move(shape_), pixel_type_, plane_coordinate_, box_, typedPtr->getPointerAtIndex(mem_index_), index_m_));
     } },
   { PixelType::Gray32,
     [](std::vector<size_t> shape_,
@@ -83,13 +67,8 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint32_t>();
-      return std::shared_ptr<TypedImage<uint32_t>>(
-        new TypedImage<uint32_t>(std::move(shape_),
-                                 pixel_type_,
-                                 plane_coordinate_,
-                                 box_,
-                                 typedPtr->getPointerAtIndex(mem_index_),
-                                 index_m_));
+      return std::shared_ptr<TypedImage<uint32_t>>(new TypedImage<uint32_t>(
+        std::move(shape_), pixel_type_, plane_coordinate_, box_, typedPtr->getPointerAtIndex(mem_index_), index_m_));
     } },
   { PixelType::Bgr48,
     [](std::vector<size_t> shape_,
@@ -100,13 +79,12 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<uint16_t>();
-      return std::shared_ptr<TypedImage<uint16_t>>(
-        new TypedImage<uint16_t>(std::move(shape_),
-                                 PixelType::Gray16,
-                                 plane_coordinate_,
-                                 box_,
-                                 typedPtr->getPointerAtIndex(mem_index_),
-                                 index_m_));
+      return std::shared_ptr<TypedImage<uint16_t>>(new TypedImage<uint16_t>(std::move(shape_),
+                                                                            PixelType::Gray16,
+                                                                            plane_coordinate_,
+                                                                            box_,
+                                                                            typedPtr->getPointerAtIndex(mem_index_),
+                                                                            index_m_));
     } },
   { PixelType::Gray32Float,
     [](std::vector<size_t> shape_,
@@ -117,13 +95,8 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<float>();
-      return std::shared_ptr<TypedImage<float>>(
-        new TypedImage<float>(std::move(shape_),
-                              pixel_type_,
-                              plane_coordinate_,
-                              box_,
-                              typedPtr->getPointerAtIndex(mem_index_),
-                              index_m_));
+      return std::shared_ptr<TypedImage<float>>(new TypedImage<float>(
+        std::move(shape_), pixel_type_, plane_coordinate_, box_, typedPtr->getPointerAtIndex(mem_index_), index_m_));
     } },
   { PixelType::Bgr96Float,
     [](std::vector<size_t> shape_,
@@ -134,13 +107,12 @@ ImageFactory::CtorMap ImageFactory::s_pixelToImageConstructor{
        size_t mem_index_,
        int index_m_) {
       auto typedPtr = bptr->getBaseAsTyped<float>();
-      return std::shared_ptr<TypedImage<float>>(
-        new TypedImage<float>(std::move(shape_),
-                              PixelType::Gray32Float,
-                              plane_coordinate_,
-                              box_,
-                              typedPtr->getPointerAtIndex(mem_index_),
-                              index_m_));
+      return std::shared_ptr<TypedImage<float>>(new TypedImage<float>(std::move(shape_),
+                                                                      PixelType::Gray32Float,
+                                                                      plane_coordinate_,
+                                                                      box_,
+                                                                      typedPtr->getPointerAtIndex(mem_index_),
+                                                                      index_m_));
     } }
 };
 
@@ -160,8 +132,7 @@ ImageFactory::sizeOfPixelType(PixelType pixel_type_)
     case PixelType::Bgr96Float:
       return sizeof(float);
     default:
-      throw PixelTypeException(pixel_type_,
-                               "Pixel Type unsupported by libCZI.");
+      throw PixelTypeException(pixel_type_, "Pixel Type unsupported by libCZI.");
   }
 }
 
@@ -179,19 +150,17 @@ ImageFactory::numberOfChannels(libCZI::PixelType pixel_type_)
     case PixelType::Bgr96Float:
       return 3;
     default:
-      throw PixelTypeException(pixel_type_,
-                               "Pixel Type unsupported by libCZI.");
+      throw PixelTypeException(pixel_type_, "Pixel Type unsupported by libCZI.");
   }
 }
 
 std::shared_ptr<Image>
-ImageFactory::constructImage(
-  const std::shared_ptr<libCZI::IBitmapData>& bitmap_ptr_,
-  libCZI::IntSize size_,
-  const libCZI::CDimCoordinate* plane_coordinate_,
-  libCZI::IntRect box_,
-  size_t mem_index_,
-  int index_m_)
+ImageFactory::constructImage(const std::shared_ptr<libCZI::IBitmapData>& bitmap_ptr_,
+                             libCZI::IntSize size_,
+                             const libCZI::CDimCoordinate* plane_coordinate_,
+                             libCZI::IntRect box_,
+                             size_t mem_index_,
+                             int index_m_)
 {
   PixelType pixelType = bitmap_ptr_->GetPixelType();
 
@@ -203,13 +172,8 @@ ImageFactory::constructImage(
   shape.emplace_back(size_.w);
 
   auto imageFactoryFunction = s_pixelToImageConstructor[pixelType];
-  std::shared_ptr<Image> image = imageFactoryFunction(shape,
-                                                      pixelType,
-                                                      plane_coordinate_,
-                                                      box_,
-                                                      m_imgContainer.get(),
-                                                      mem_index_,
-                                                      index_m_);
+  std::shared_ptr<Image> image =
+    imageFactoryFunction(shape, pixelType, plane_coordinate_, box_, m_imgContainer.get(), mem_index_, index_m_);
   if (image == nullptr)
     throw std::bad_alloc();
   image->loadImage(bitmap_ptr_, size_, channels);
@@ -240,19 +204,14 @@ ImageFactory::getFixedShape(void)
       m_imgContainer->pixelType() == libCZI::PixelType::Bgr48 ||
       m_imgContainer->pixelType() == libCZI::PixelType::Bgr96Float) {
     auto ittr =
-      find_if(charSizes.begin(),
-              charSizes.end(),
-              [](std::pair<char, size_t>& pr) { return (pr.first == 'C'); });
+      find_if(charSizes.begin(), charSizes.end(), [](std::pair<char, size_t>& pr) { return (pr.first == 'C'); });
     if (ittr != charSizes.end())
       ittr->second *= 3; // scale the C channel by 3 because we're expanding it
-    else { // There's an implicit C channel so add it and set it to 3
+    else {               // There's an implicit C channel so add it and set it to 3
       charSizes.push_back(std::pair<char, size_t>('C', 3));
-      std::sort(charSizes.begin(),
-                charSizes.end(),
-                [&](std::pair<char, size_t> a_, std::pair<char, size_t> b_) {
-                  return libCZI::Utils::CharToDimension(a_.first) >
-                         libCZI::Utils::CharToDimension(b_.first);
-                });
+      std::sort(charSizes.begin(), charSizes.end(), [&](std::pair<char, size_t> a_, std::pair<char, size_t> b_) {
+        return libCZI::Utils::CharToDimension(a_.first) > libCZI::Utils::CharToDimension(b_.first);
+      });
     }
   }
   return charSizes;

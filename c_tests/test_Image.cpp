@@ -40,8 +40,7 @@ public:
   {}
   std::shared_ptr<Image> get()
   {
-    auto cDims = libCZI::CDimCoordinate{ { libCZI::DimensionIndex::B, 0 },
-                                         { libCZI::DimensionIndex::C, 0 } };
+    auto cDims = libCZI::CDimCoordinate{ { libCZI::DimensionIndex::B, 0 }, { libCZI::DimensionIndex::C, 0 } };
     auto imgCont = m_czi->readSelected(cDims, -1, 1);
     auto imVec = imgCont.first->images();
     return imVec.front();
@@ -70,42 +69,28 @@ TEST_CASE_METHOD(CziImageCreator, "test_image_nothrow", "[Image_Cast_Nothrow]")
 
 TEST_CASE("test_image_accessors", "[Image_operator[]]")
 {
-  libCZI::CDimCoordinate cdim{ { libCZI::DimensionIndex::S, 1 },
-                               { libCZI::DimensionIndex::C, 1 } };
+  libCZI::CDimCoordinate cdim{ { libCZI::DimensionIndex::S, 1 }, { libCZI::DimensionIndex::C, 1 } };
   auto uMemPtr = std::unique_ptr<uint16_t>(new uint16_t[60]);
-  TypedImage<uint16_t> img({ 3, 4, 5 },
-                           libCZI::PixelType::Gray16,
-                           &cdim,
-                           { 0, 0, 5, 4 },
-                           uMemPtr.get(),
-                           -1);
+  TypedImage<uint16_t> img({ 3, 4, 5 }, libCZI::PixelType::Gray16, &cdim, { 0, 0, 5, 4 }, uMemPtr.get(), -1);
   uint16_t ip[60];
   for (int i = 0; i < 3 * 4 * 5; i++)
     ip[i] = i / 3 + 1;
 
   pylibczi::SourceRange<uint16_t> sourceRange(3, ip, ip + 60, 30, 5);
-  pylibczi::TargetRange<uint16_t> targetRange(
-    3, 5, 4, img.getRawPtr(), img.getRawPtr(60));
+  pylibczi::TargetRange<uint16_t> targetRange(3, 5, 4, img.getRawPtr(), img.getRawPtr(60));
 
-  pylibczi::SourceRange<uint16_t>::SourceChannelIterator beg =
-    sourceRange.strideBegin(1);
-  pylibczi::SourceRange<uint16_t>::SourceChannelIterator end =
-    sourceRange.strideEnd(0);
+  pylibczi::SourceRange<uint16_t>::SourceChannelIterator beg = sourceRange.strideBegin(1);
+  pylibczi::SourceRange<uint16_t>::SourceChannelIterator end = sourceRange.strideEnd(0);
   REQUIRE(beg == end);
   REQUIRE(sourceRange.strideBegin(2) == sourceRange.strideEnd(1));
   REQUIRE(sourceRange.strideBegin(3) == sourceRange.strideEnd(2));
 
-  for (int i = 0; i < 4;
-       i++) { // copy stride by stride as you would with an actual image
+  for (int i = 0; i < 4; i++) { // copy stride by stride as you would with an actual image
     pairedForEach(sourceRange.strideBegin(i),
                   sourceRange.strideEnd(i),
                   targetRange.strideBegin(i),
                   [](std::vector<uint16_t*> a, std::vector<uint16_t*> b) {
-                    pairedForEach(
-                      a.begin(),
-                      a.end(),
-                      b.begin(),
-                      [](uint16_t* ai, uint16_t* bi) { *bi = *ai; });
+                    pairedForEach(a.begin(), a.end(), b.begin(), [](uint16_t* ai, uint16_t* bi) { *bi = *ai; });
                   });
   }
   int cnt = 0;
@@ -123,42 +108,28 @@ TEST_CASE("test_image_accessors", "[Image_operator[]]")
 
 TEST_CASE("test_image_accessors_2d", "[Image_operator[2d]]")
 {
-  libCZI::CDimCoordinate cdim{ { libCZI::DimensionIndex::S, 1 },
-                               { libCZI::DimensionIndex::C, 1 } };
+  libCZI::CDimCoordinate cdim{ { libCZI::DimensionIndex::S, 1 }, { libCZI::DimensionIndex::C, 1 } };
   auto uMemPtr = std::unique_ptr<uint16_t>(new uint16_t[20]);
-  TypedImage<uint16_t> img({ 4, 5 },
-                           libCZI::PixelType::Gray16,
-                           &cdim,
-                           { 0, 0, 5, 4 },
-                           uMemPtr.get(),
-                           -1);
+  TypedImage<uint16_t> img({ 4, 5 }, libCZI::PixelType::Gray16, &cdim, { 0, 0, 5, 4 }, uMemPtr.get(), -1);
   uint16_t ip[20];
   for (int i = 0; i < 4 * 5; i++)
     ip[i] = i + 1;
 
   pylibczi::SourceRange<uint16_t> sourceRange(1, ip, ip + 20, 10, 5);
-  pylibczi::TargetRange<uint16_t> targetRange(
-    1, 5, 4, img.getRawPtr(), img.getRawPtr(20));
+  pylibczi::TargetRange<uint16_t> targetRange(1, 5, 4, img.getRawPtr(), img.getRawPtr(20));
 
-  pylibczi::SourceRange<uint16_t>::SourceChannelIterator beg =
-    sourceRange.strideBegin(1);
-  pylibczi::SourceRange<uint16_t>::SourceChannelIterator end =
-    sourceRange.strideEnd(0);
+  pylibczi::SourceRange<uint16_t>::SourceChannelIterator beg = sourceRange.strideBegin(1);
+  pylibczi::SourceRange<uint16_t>::SourceChannelIterator end = sourceRange.strideEnd(0);
   REQUIRE(beg == end);
   REQUIRE(sourceRange.strideBegin(2) == sourceRange.strideEnd(1));
   REQUIRE(sourceRange.strideBegin(3) == sourceRange.strideEnd(2));
 
-  for (int i = 0; i < 4;
-       i++) { // copy stride by stride as you would with an actual image
+  for (int i = 0; i < 4; i++) { // copy stride by stride as you would with an actual image
     pairedForEach(sourceRange.strideBegin(i),
                   sourceRange.strideEnd(i),
                   targetRange.strideBegin(i),
                   [](std::vector<uint16_t*> a_, std::vector<uint16_t*> b_) {
-                    pairedForEach(
-                      a_.begin(),
-                      a_.end(),
-                      b_.begin(),
-                      [](uint16_t* ai_, uint16_t* bi_) { *bi_ = *ai_; });
+                    pairedForEach(a_.begin(), a_.end(), b_.begin(), [](uint16_t* ai_, uint16_t* bi_) { *bi_ = *ai_; });
                   });
   }
   int cnt = 0;

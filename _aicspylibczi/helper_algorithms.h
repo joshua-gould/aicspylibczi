@@ -23,10 +23,7 @@
 //! @endcode
 template<class InputIt, class OtherIt, class PairFunction>
 PairFunction
-pairedForEach(InputIt first_,
-              InputIt last_,
-              OtherIt other_first_,
-              PairFunction f_)
+pairedForEach(InputIt first_, InputIt last_, OtherIt other_first_, PairFunction f_)
 {
   for (; first_ != last_; ++first_, ++other_first_) {
     f_(*first_, *other_first_);

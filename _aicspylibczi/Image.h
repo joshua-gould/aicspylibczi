@@ -41,8 +41,7 @@ protected:
    * consistency with the Channel Dimension.
    */
 
-  std::vector<size_t>
-    m_shape; // C Y X order or Y X  ( H, W )  The shape of the data being stored
+  std::vector<size_t> m_shape; // C Y X order or Y X  ( H, W )  The shape of the data being stored
   libCZI::PixelType m_pixelType;
   libCZI::IntRect m_xywh; // (x0, y0, w, h) for image bounding box
 
@@ -72,18 +71,15 @@ public:
 
   libCZI::IntRect bBox() const { return m_xywh; }
 
-  size_t length()
-  {
-    return std::accumulate(
-      m_shape.begin(), m_shape.end(), (size_t)1, std::multiplies<>());
-  }
+  size_t length() { return std::accumulate(m_shape.begin(), m_shape.end(), (size_t)1, std::multiplies<>()); }
 
   libCZI::PixelType pixelType() { return m_pixelType; }
 
-  virtual void loadImage(
-    const std::shared_ptr<libCZI::IBitmapData>& bitmap_ptr_,
-    libCZI::IntSize size_,
-    size_t channels_) = 0;
+  virtual char* ptr_address() = 0;
+
+  virtual void loadImage(const std::shared_ptr<libCZI::IBitmapData>& bitmap_ptr_,
+                         libCZI::IntSize size_,
+                         size_t channels_) = 0;
 
   ~Image() {}
 };
@@ -109,19 +105,16 @@ public:
   void setMosaic(bool val_) { m_isMosaic = val_; }
   void sort()
   {
-    std::sort(
-      begin(),
-      end(),
-      [](const std::shared_ptr<Image>& a_,
-         const std::shared_ptr<Image>& b_) -> bool { return *a_ < *b_; });
+    std::sort(begin(), end(), [](const std::shared_ptr<Image>& a_, const std::shared_ptr<Image>& b_) -> bool {
+      return *a_ < *b_;
+    });
   }
 
   std::vector<std::map<char, size_t>> getImageDimsList()
   {
     std::vector<std::map<char, size_t>> indexMap;
     for (const auto& image : *this) {
-      indexMap.push_back(
-        image->getValidIndexes(m_isMosaic)); // only add M if it's a mosaic file
+      indexMap.push_back(image->getValidIndexes(m_isMosaic)); // only add M if it's a mosaic file
     }
     return indexMap;
   }
@@ -147,20 +140,14 @@ public:
     for (auto keySet : charSetSize) {
       charSizes.emplace_back(keySet.first, keySet.second.size());
     }
-    auto heightByWidth =
-      front()->shape(); // assumption: images are the same shape, if not 🙃
+    auto heightByWidth = front()->shape(); // assumption: images are the same shape, if not 🙃
     size_t hByWsize = heightByWidth.size();
-    charSizes.emplace_back(
-      'Y', heightByWidth[hByWsize - 2]); // H: 2 - 2 = 0 | 3 - 2 = 1
-    charSizes.emplace_back(
-      'X', heightByWidth[hByWsize - 1]); // W: 2 - 1 = 1 | 3 - 1 = 2
+    charSizes.emplace_back('Y', heightByWidth[hByWsize - 2]); // H: 2 - 2 = 0 | 3 - 2 = 1
+    charSizes.emplace_back('X', heightByWidth[hByWsize - 1]); // W: 2 - 1 = 1 | 3 - 1 = 2
     // sort them into decending DimensionIndex Order
-    std::sort(charSizes.begin(),
-              charSizes.end(),
-              [&](std::pair<char, size_t> a_, std::pair<char, size_t> b_) {
-                return libCZI::Utils::CharToDimension(a_.first) >
-                       libCZI::Utils::CharToDimension(b_.first);
-              });
+    std::sort(charSizes.begin(), charSizes.end(), [&](std::pair<char, size_t> a_, std::pair<char, size_t> b_) {
+      return libCZI::Utils::CharToDimension(a_.first) > libCZI::Utils::CharToDimension(b_.first);
+    });
     return charSizes;
   }
 };

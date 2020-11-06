@@ -20,8 +20,8 @@ class IndexMap
   typedef std::map<libCZI::DimensionIndex, int> MapType;
   int m_subBlockIndex; // the subBlock index from the file
   int m_indexM;        // the mIndex
-  int m_position; // the index of the subBlock in the file within the subset
-                  // included
+  int m_position;      // the index of the subBlock in the file within the subset
+                       // included
   MapType m_dims;
 
   static const std::vector<libCZI::DimensionIndex> s_sortOrder;
@@ -38,10 +38,7 @@ public:
 
   bool operator<(const IndexMap& other_);
 
-  bool lessThanSubBlock(const IndexMap& other_) const
-  {
-    return this->m_subBlockIndex < other_.m_subBlockIndex;
-  }
+  bool lessThanSubBlock(const IndexMap& other_) const { return this->m_subBlockIndex < other_.m_subBlockIndex; }
 
   bool isMIndexValid() const;
 

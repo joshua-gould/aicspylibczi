@@ -15,8 +15,7 @@ struct Constants
   using CziDi = libCZI::DimensionIndex;
   static const std::initializer_list<CziDi> s_sortOrder;
 
-  bool dimsMatch(const libCZI::CDimCoordinate& target_dims_,
-                 const libCZI::CDimCoordinate& czi_dims_);
+  bool dimsMatch(const libCZI::CDimCoordinate& target_dims_, const libCZI::CDimCoordinate& czi_dims_);
 };
 }
 

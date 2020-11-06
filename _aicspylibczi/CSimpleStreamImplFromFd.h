@@ -28,10 +28,7 @@ public:
   CSimpleStreamImplFromFd() = delete;
   explicit CSimpleStreamImplFromFd(int file_descriptor_);
   ~CSimpleStreamImplFromFd() override { fclose(m_fp); };
-  void Read(std::uint64_t offset_,
-            void* data_ptr_,
-            std::uint64_t size_,
-            std::uint64_t* bytes_read_ptr_) override;
+  void Read(std::uint64_t offset_, void* data_ptr_, std::uint64_t size_, std::uint64_t* bytes_read_ptr_) override;
 };
 }
 

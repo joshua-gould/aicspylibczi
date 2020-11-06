@@ -34,12 +34,9 @@ class ThreadingRequestedCoresException : public std::exception
   std::stringstream m_message;
 
 public:
-  explicit ThreadingRequestedCoresException(int cores_,
-                                            int requested_cores_,
-                                            std::string message_)
+  explicit ThreadingRequestedCoresException(int cores_, int requested_cores_, std::string message_)
   {
-    m_message << "Requested " << requested_cores_ << " but there are only "
-              << cores_ << "available. " << message_;
+    m_message << "Requested " << requested_cores_ << " but there are only " << cores_ << "available. " << message_;
   }
 
   const char* what() const noexcept override { return m_message.str().c_str(); }
@@ -62,8 +59,7 @@ public:
   const char* what() const noexcept override
   {
     auto tname = s_byName.find(m_pixelType);
-    std::string name((tname == s_byName.end()) ? "Unknown type"
-                                               : tname->second);
+    std::string name((tname == s_byName.end()) ? "Unknown type" : tname->second);
     std::string tmp("PixelType( " + name + " ): " + m_message);
     return tmp.c_str();
   }
@@ -89,8 +85,7 @@ public:
     std::stringstream front;
     front << "Requirement violated requested region is not a subset of the "
              "defined image! \n\t "
-          << m_requested << " ⊄ " << m_image << "\n\t" << m_message
-          << std::endl;
+          << m_requested << " ⊄ " << m_image << "\n\t" << m_message << std::endl;
     return front.str().c_str();
   }
 };
@@ -101,9 +96,7 @@ class ImageAccessUnderspecifiedException : public std::exception
   std::string m_message;
 
 public:
-  ImageAccessUnderspecifiedException(size_t given_,
-                                     size_t required_,
-                                     std::string message_)
+  ImageAccessUnderspecifiedException(size_t given_, size_t required_, std::string message_)
     : m_given(given_)
     , m_required(required_)
     , m_message(std::move(message_))
@@ -112,8 +105,8 @@ public:
   const char* what() const noexcept override
   {
     std::stringstream tmp;
-    tmp << "Dimensions underspecified, given " << m_given << " dimensions but "
-        << m_required << " needed! \n\t" << m_message << std::endl;
+    tmp << "Dimensions underspecified, given " << m_given << " dimensions but " << m_required << " needed! \n\t"
+        << m_message << std::endl;
     return tmp.str().c_str();
   }
 };
@@ -144,9 +137,8 @@ public:
   const char* what() const noexcept override
   {
     std::stringstream tmp;
-    tmp << m_message << " Channel should be zero or unset but has a value of "
-        << m_channel << " not sure how to procede in assigning channels."
-        << std::endl;
+    tmp << m_message << " Channel should be zero or unset but has a value of " << m_channel
+        << " not sure how to procede in assigning channels." << std::endl;
     return tmp.str().c_str();
   }
 };
@@ -167,8 +159,7 @@ public:
     std::stringstream tmp;
     auto gbSize = static_cast<double>(m_size);
     gbSize /= 1073741824.0; // 1024 * 1024 * 1024
-    tmp << "ImageCopyAllocFailed [" << std::setprecision(1) << gbSize
-        << " GB requested]: " << m_message << std::endl;
+    tmp << "ImageCopyAllocFailed [" << std::setprecision(1) << gbSize << " GB requested]: " << m_message << std::endl;
     return tmp.str().c_str();
   }
 };
@@ -218,10 +209,9 @@ class CdimSelectionZeroImagesException : public std::exception
   std::string m_message;
 
 public:
-  CdimSelectionZeroImagesException(
-    libCZI::CDimCoordinate& requested_plane_coordinate_,
-    libCZI::CDimBounds& plane_coordinate_bounds_,
-    std::string message_)
+  CdimSelectionZeroImagesException(libCZI::CDimCoordinate& requested_plane_coordinate_,
+                                   libCZI::CDimBounds& plane_coordinate_bounds_,
+                                   std::string message_)
     : m_requestedPlaneCoordinate(requested_plane_coordinate_)
     , m_planeCoordinateBounds(plane_coordinate_bounds_)
     , m_message(std::move(message_))
@@ -232,9 +222,8 @@ public:
   const char* what() const noexcept override
   {
     std::stringstream tmp;
-    tmp << "Specified Dims resulted in NO image frames: "
-        << m_requestedPlaneCoordinate << " ∉ " << m_planeCoordinateBounds
-        << std::endl;
+    tmp << "Specified Dims resulted in NO image frames: " << m_requestedPlaneCoordinate << " ∉ "
+        << m_planeCoordinateBounds << std::endl;
     return tmp.str().c_str();
   }
 };

@@ -1,113 +1,113 @@
 #ifndef _AICSPYLIBCZI_THREADPOOL_H
 #define _AICSPYLIBCZI_THREADPOOL_H
 
-#include <tuple>
 #include <atomic>
 #include <deque>
-#include <vector>
-#include <thread>
+#include <functional>
+#include <future>
 #include <memory>
 #include <mutex>
-#include <future>
-#include <utility>
 #include <stdexcept>
-#include <functional>
+#include <thread>
+#include <tuple>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace pylibczi {
 
-  struct Tasks {
-      // the mutex, condition variable and deque form a single
-      // thread-safe triggered queue of tasks:
-      std::mutex m;
-      std::condition_variable v;
-      // note that a packaged_task<void> can store a packaged_task<R>:
-      std::deque<std::packaged_task<bool()>> work;
+struct Tasks
+{
+  // the mutex, condition variable and deque form a single
+  // thread-safe triggered queue of tasks:
+  std::mutex m;
+  std::condition_variable v;
+  // note that a packaged_task<void> can store a packaged_task<R>:
+  std::deque<std::packaged_task<bool()>> work;
 
-      // this holds futures representing the worker threads being done:
-      std::vector<std::future<void>> finished;
+  // this holds futures representing the worker threads being done:
+  std::vector<std::future<void>> finished;
 
-      // queue( lambda ) will enqueue the lambda into the tasks for the threads
-      // to use.  A future of the type the lambda returns is given to let you get
-      // the result out.
-      template<class F, class R=std::result_of_t<F&()>>
-      std::future<R> queue(F&& f) {
-          // wrap the function object into a packaged task, splitting
-          // execution from the return value:
-          std::packaged_task<R()> p(std::forward<F>(f));
+  // queue( lambda ) will enqueue the lambda into the tasks for the threads
+  // to use.  A future of the type the lambda returns is given to let you get
+  // the result out.
+  template<class F, class R = std::result_of_t<F&()>>
+  std::future<R> queue(F&& f)
+  {
+    // wrap the function object into a packaged task, splitting
+    // execution from the return value:
+    std::packaged_task<R()> p(std::forward<F>(f));
 
-          auto r=p.get_future(); // get the return value before we hand off the task
-          {
-              std::unique_lock<std::mutex> l(m);
-              work.emplace_back(std::move(p)); // store the task<R()> as a task<void()>
-          }
-          v.notify_one(); // wake a thread to work on the task
+    auto r = p.get_future(); // get the return value before we hand off the task
+    {
+      std::unique_lock<std::mutex> l(m);
+      work.emplace_back(std::move(p)); // store the task<R()> as a task<void()>
+    }
+    v.notify_one(); // wake a thread to work on the task
 
-          return r; // return the future result of the task
-      }
+    return r; // return the future result of the task
+  }
 
-      // start N threads in the thread pool.
-      void start(std::size_t N=1){
-          for (std::size_t i = 0; i < N; ++i)
-          {
-              // each thread is a std::async running this->thread_task():
-              finished.push_back(
-                  std::async(
-                      std::launch::async,
-                      [this]{ thread_task(); }
-                  )
-              );
-          }
-      }
+  // start N threads in the thread pool.
+  void start(std::size_t N = 1)
+  {
+    for (std::size_t i = 0; i < N; ++i) {
+      // each thread is a std::async running this->thread_task():
+      finished.push_back(std::async(std::launch::async, [this] { thread_task(); }));
+    }
+  }
 
+  // abort() cancels all non-started tasks, and tells every working thread
+  // stop running, and waits for them to finish up.
+  void abort()
+  {
+    cancel_pending();
+    finish();
+  }
+  // cancel_pending() merely cancels all non-started tasks:
+  void cancel_pending()
+  {
+    std::unique_lock<std::mutex> l(m);
+    work.clear();
+  }
+  // finish enques a "stop the thread" message for every thread, then waits for them:
+  void finish()
+  {
+    {
+      std::unique_lock<std::mutex> l(m);
+      for (auto&& unused : finished) {
+        work.push_back({});
+      }
+    }
+    v.notify_all();
+    finished.clear();
+  }
+  ~Tasks() { finish(); }
 
-      // abort() cancels all non-started tasks, and tells every working thread
-      // stop running, and waits for them to finish up.
-      void abort() {
-          cancel_pending();
-          finish();
+private:
+  // the work that a worker thread does:
+  void thread_task()
+  {
+    while (true) {
+      // pop a task off the queue:
+      std::packaged_task<bool()> f;
+      {
+        // usual thread-safe queue code:
+        std::unique_lock<std::mutex> l(m);
+        if (work.empty()) {
+          v.wait(l, [&] { return !work.empty(); });
+        }
+        f = std::move(work.front());
+        work.pop_front();
       }
-      // cancel_pending() merely cancels all non-started tasks:
-      void cancel_pending() {
-          std::unique_lock<std::mutex> l(m);
-          work.clear();
-      }
-      // finish enques a "stop the thread" message for every thread, then waits for them:
-      void finish() {
-          {
-              std::unique_lock<std::mutex> l(m);
-              for(auto&&unused:finished){
-                  work.push_back({});
-              }
-          }
-          v.notify_all();
-          finished.clear();
-      }
-      ~Tasks() {
-          finish();
-      }
-  private:
-      // the work that a worker thread does:
-      void thread_task() {
-          while(true){
-              // pop a task off the queue:
-              std::packaged_task<bool()> f;
-              {
-                  // usual thread-safe queue code:
-                  std::unique_lock<std::mutex> l(m);
-                  if (work.empty()){
-                      v.wait(l,[&]{return !work.empty();});
-                  }
-                  f = std::move(work.front());
-                  work.pop_front();
-              }
-              // if the task is invalid, it means we are asked to abort:
-              if (!f.valid()) return;
-              // otherwise, run the task:
-              f();
-          }
-      }
-  };
+      // if the task is invalid, it means we are asked to abort:
+      if (!f.valid())
+        return;
+      // otherwise, run the task:
+      f();
+    }
+  }
+};
 
 }
 
