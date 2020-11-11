@@ -301,6 +301,16 @@ TEST_CASE_METHOD(CziMCreator, "test_mosaic_read", "[Reader_mosaic_read]")
   REQUIRE(imvec.size() == 1);
 }
 
+TEST_CASE_METHOD(CziMCreator, "test_mosaic_readScaled", "[Reader_mosaic_readScaled]")
+{
+  auto czi = get();
+  auto c_dims = libCZI::CDimCoordinate{ { libCZI::DimensionIndex::C, 0 } };
+  auto imCont = czi->readMosaic(c_dims, 0.1);
+  auto imvec = imCont->images();
+  REQUIRE(imvec.size() == 1);
+}
+
+
 TEST_CASE_METHOD(CziMCreator, "test_mosaic_shape", "[Reader_mosaic_shape]")
 {
   auto czi = get();
@@ -563,11 +573,13 @@ TEST_CASE_METHOD(CziCreatorBigM, "test_bigm_czifile", "[Reader_bbox]")
   auto dSizes = czi->dimSizes();
 
   auto ans = czi->getAllSceneYXSize(0, true);
-  assert(ans.size() == 88); // 2 channels * 44 m_index
-  assert(ans[2].x == 22739);
-  assert(ans[2].y == 19201);
-  assert(ans[2].w == 950);
-  assert(ans[2].h == 650);
+  REQUIRE(ans.size() == 88); // 2 channels * 44 m_index
+  REQUIRE(ans[2].x == 23594);
+  REQUIRE(ans[2].y == 19201);
+  REQUIRE(ans[2].w == 950);
+  REQUIRE(ans[2].h == 650);
+  libCZI::CDimCoordinate cdims = {{libCZI::DimensionIndex::C, 0}};
+  // REQUIRE_NOTHROW not compatible with MSVC as is.
 }
 
 #endif
