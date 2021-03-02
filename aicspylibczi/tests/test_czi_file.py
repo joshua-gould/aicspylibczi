@@ -3,6 +3,7 @@ from lxml import etree
 import numpy as np
 import pytest
 
+
 from aicspylibczi import CziFile
 from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
 
@@ -139,7 +140,7 @@ def test_mosaic_size(data_dir, fname, expected):
     ('s_1_t_1_c_1_z_1.czi', (1, 1, 325, 475)),  # B C Y X
     ('s_3_t_1_c_3_z_5.czi', (1, 3, 3, 5, 325, 475)),  # B S C Z Y X
     ('mosaic_test.czi', (1, 1, 1, 1, 2, 624, 924)),  # S T C Z M Y X
-    ('RGB-8bit.czi', (1, 3, 624, 924)),  # T C Y X
+    ('RGB-8bit.czi', (1, 624, 924, 3)),  # T Y X A
 ])
 def test_read_image(data_dir, fname, expected):
     czi = CziFile(str(data_dir / fname))
@@ -175,7 +176,7 @@ def test_read_image_args(data_dir, fname, args, expected):
                                        'S': (0, 3), 'Z': (0, 5)}]),
     ('mosaic_test.czi', "STCZMYX", [{'S': (0, 1), 'T': (0, 1), 'C': (0, 1), 'Z': (0, 1),
                                     'M': (0, 2), 'Y': (0, 624), 'X': (0, 924)}]),
-
+    ('RGB-8bit.czi', "TYXA", [{'T': (0, 1), 'Y': (0, 624), 'X': (0, 924), 'A': (0, 3)}]),
 ])
 def test_read_image_two(data_dir, fname, exp_str, exp_dict):
     czi = CziFile(str(data_dir / fname))
@@ -233,32 +234,35 @@ def test_image_shape(data_dir, fname, expects):
     with open(data_dir / fname, 'rb') as fp:
         czi = CziFile(czi_filename=fp)
         shape = czi.dims_shape()
-    assert shape == expects
+        assert shape == expects
 
 
-@pytest.mark.parametrize("fname, expects", [
-    ('mosaic_test.czi', [{'B': (0, 1), 'C': (0, 1), 'X': (0, 475), 'Y': (0, 325)}]),
+@pytest.mark.parametrize("fname, unscaled_size, expects", [
+    ('mosaic_test.czi', (0, 0, 1756, 624), [{'B': (0, 1), 'C': (0, 1), 'X': (0, 475), 'Y': (0, 325)}]),
+    ('Multiscene_CZI_3Scenes.czi', (495412, 354694, 3587, 1926),  [{'X': (0, 358), 'Y': (0, 192)}]),
 ])
-def test_mosaic_image(data_dir, fname, expects):
+def test_mosaic_image(data_dir, fname, unscaled_size, expects):
     with open(data_dir / fname, 'rb') as fp:
         czi = CziFile(czi_filename=fp)
         sze = czi.read_mosaic_size()
-        assert sze[2] == 1756
-        assert sze[3] == 624
+        assert sze[2] == unscaled_size[2]
+        assert sze[3] == unscaled_size[3]
         img = czi.read_mosaic(scale_factor=0.1, C=0)
-    assert img.shape[0] == 1
+        assert img.shape[0] == 1
+        assert img.shape[1] == unscaled_size[3]//10
+        assert img.shape[2] == unscaled_size[2]//10
 
 
 @pytest.mark.parametrize("fname, expects", [
     ('mosaic_test.czi', (1, int(624/2), int(1756/2))),
 ])
-def test_mosaic_image_two(data_dir, fname, expects):
+def test_two_mosaic_image(data_dir, fname, expects):
     with open(data_dir / fname, 'rb') as fp:
         czi = CziFile(czi_filename=fp)
         sze = czi.read_mosaic_size()
         rgion = (sze[0], sze[1], int(sze[2]/2), int(sze[3]/2))
         img = czi.read_mosaic(region=rgion, C=0, M=0)
-    assert img.shape == expects
+        assert img.shape == expects
 
 
 @pytest.mark.parametrize("fname, s_index, m_index, expected", [
@@ -301,5 +305,5 @@ def test_bgr_plane_data_x(data_dir, fname, p_index, ans_file):
     with open(data_dir/fname, 'rb') as fp:
         czi = CziFile(czi_filename=fp)
         img, dims = czi.read_image()
-        assert img[0, p_index, :, :].shape == ans.shape
-        np.testing.assert_array_almost_equal(img[0, p_index, :, :], ans)
+        assert img[0, :, :, p_index].shape == ans.shape
+        np.testing.assert_array_almost_equal(img[0, :, :, p_index], ans)
