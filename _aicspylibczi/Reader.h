@@ -89,6 +89,11 @@ class Reader
 
 public:
   // was vector
+  using TileBBoxMap = std::map<SubblockSortable, libCZI::IntRect>;
+  using TilePair = std::pair<const SubblockSortable, libCZI::IntRect>;
+  using SceneBBoxMap = std::map<unsigned int, libCZI::IntRect>;
+  using ScenePair = std::pair<const unsigned int, libCZI::IntRect>;
+
   using SubblockIndexVec = std::set<std::pair<SubblockSortable, int>>;
   using DimIndexRangeMap = std::map<DimIndex, std::pair<int, int>>;
   using Shape = std::vector<std::pair<char, size_t>>;
@@ -215,14 +220,6 @@ public:
   SubblockMetaVec readSubblockMeta(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
 
   /*!
-   * @brief provide the subblock info logicalRect coordinates
-   * @param plane_coord_ A structure containing the Dimension constraints
-   * @param index_m_ Must be set to select the tile of the mosaic file
-   * @return an IntRect {x, y, w, h}
-   */
-  libCZI::IntRect readSubblockRect(libCZI::CDimCoordinate& plane_coord_, int index_m_ = -1);
-
-  /*!
    * @brief If the czi file is a mosaic tiled image this function can be used to reconstruct it into an image.
    * @param plane_coord_ A class constraining the data to an individual plane.
    * @param scale_factor_ (optional) The native size for mosaic files can be huge the scale factor allows one to get
@@ -249,7 +246,6 @@ public:
   ImagesContainerBase::ImagesContainerBasePtr readMosaic(libCZI::CDimCoordinate plane_coord_,
                                                          float scale_factor_ = 1.0,
                                                          libCZI::IntRect im_box_ = { 0, 0, -1, -1 });
-  // changed from {.w=-1, .h=-1} to above to support MSVC and GCC - lagging on C++14 std
 
   /*!
    * Convert the libCZI::DimensionIndex to a character
@@ -262,12 +258,6 @@ public:
 
   virtual ~Reader() { m_czireader->Close(); }
 
-  /*!
-   * Get the full size of the mosaic image without scaling. If you're selecting a sub-region it must be within the box
-   * returned.
-   * @return an IntRect {x, y, w, h}
-   */
-  libCZI::IntRect mosaicShape() const { return m_statistics.boundingBoxLayer0Only; }
 
   /*!
    * @brief get the shape of the loaded images
@@ -278,25 +268,58 @@ public:
   static Shape getShape(pylibczi::ImageVector& images_, bool is_mosaic_) { return images_.getShape(); }
 
   /*!
-   * @brief get the pyramid 0 (acquired data) shape
-   * @param scene_index_ specifies scene but defaults to the first scene,
-   * Scenes can have different sizes
-   * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+   * @brief get a tile bouinding box
+   * @param plane_coord_ = dims to specify 1 tile
+   * @return the tile bounding box
    */
-  libCZI::IntRect getSceneYXSize(int scene_index_ = -1)
-  {
-    std::vector<libCZI::IntRect> matches = getAllSceneYXSize(scene_index_);
-    return matches.front();
-  }
+  TilePair tileBoundingBox(libCZI::CDimCoordinate& plane_coord_);
 
   /*!
-   * @brief get the pyramid 0 (acquired data) shape
-   * @param scene_index_ specifies scene but defaults to the first scene,
-   * Scenes can have different sizes
-   * @param get_all_matches_ if true return all matching bounding boxes
-   * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+   * @brief return a map selected bounding boxes
+   * @param plane_coord_ = to constrain the matches (empty would match everything in the file)
+   * @return a map with keys of dims and values of bounding box.
    */
-  std::vector<libCZI::IntRect> getAllSceneYXSize(int scene_index_ = -1, bool get_all_matches_ = false);
+  TileBBoxMap tileBoundingBoxes(libCZI::CDimCoordinate& plane_coord_);
+
+  /*!
+   * @brief get a scene bounding box
+   */
+  libCZI::IntRect sceneBoundingBox(unsigned int scene_index_ = 0);
+
+  /*!
+   * @brief get all scene bounding boxes
+   */
+  SceneBBoxMap allSceneBoundingBoxes();
+
+  /*!
+   * @brief get the bounding box for the entire mosaic image
+   */
+  libCZI::IntRect mosaicBoundingBox() const;
+
+  /*!
+   * @brief get the bounding box for 1 tile
+   * @param plane_coord_ = the dims to define the single coordinate
+   * @param index_m_ = the m_index to specify the tile
+   * @return IntRect with x, y, w, h.
+   */
+  TilePair mosaicTileBoundingBox(libCZI::CDimCoordinate& plane_coord_, int index_m_);
+
+  /*!
+   * @brief get multible bounding boxes from the CZI
+   * @param plane_coord_ = the dim constraints
+   * @return a map of Subblock selectable keys with bounding box values (IntRects)
+   */
+  TileBBoxMap mosaicTileBoundingBoxes(libCZI::CDimCoordinate& plane_coord_);
+
+  /*!
+   * @brief get a scene bounding box for the specified scene_index
+   */
+  libCZI::IntRect mosaicSceneBoundingBox(unsigned int scene_index_);
+
+  /*!
+   * @brief get all scene bounding boxes a map with keys scene_index and values of bounding boxes (IntRect).
+   */
+  SceneBBoxMap allMosaicSceneBoundingBoxes();
 
   std::string pixelType()
   {
@@ -316,9 +339,33 @@ private:
 
   static bool isValidRegion(const libCZI::IntRect& in_box_, const libCZI::IntRect& czi_box_);
 
+  TileBBoxMap tileBoundingBoxesWith(SubblockSortable& subblocksToFind_);
+
   void checkSceneShapes();
 
+  /*!
+  * @brief get the pyramid 0 (acquired data) shape
+  * @param scene_index_ specifies scene but defaults to the first scene,
+  * Scenes can have different sizes
+  * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+  */
+  libCZI::IntRect getSceneYXSize(int scene_index_ = -1)
+  {
+    std::vector<libCZI::IntRect> matches = getAllSceneYXSize(scene_index_);
+    return matches.front();
+  }
+
+  /*!
+   * @brief get the pyramid 0 (acquired data) shape
+   * @param scene_index_ specifies scene but defaults to the first scene,
+   * Scenes can have different sizes
+   * @param get_all_matches_ if true return all matching bounding boxes
+   * @return std::vector<libCZI::IntRect> containing (x0, y0, w, h)
+   */
+  std::vector<libCZI::IntRect> getAllSceneYXSize(int scene_index_ = -1, bool get_all_matches_ = false);
+
   libCZI::PixelType getFirstPixelType();
+
 };
 
 }
