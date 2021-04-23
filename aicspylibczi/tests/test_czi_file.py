@@ -1,7 +1,7 @@
 import io
-from lxml import etree
 import numpy as np
 import pytest
+import xml.etree.ElementTree as ET
 
 
 from aicspylibczi import CziFile
@@ -78,7 +78,7 @@ def test_conversion_types(in_, out_):
     ],
 )
 def test_metadata(data_dir, fname, xp_query, expected):
-    czi = CziFile(str(data_dir / fname), metafile_out="tmp.txt")
+    czi = CziFile(str(data_dir / fname))
     meta = czi.meta
     vs = meta.find(xp_query)
     assert int(vs.text) == expected
@@ -359,8 +359,8 @@ def test_read_subblock_meta(data_dir, fname, expected):
     [
         (
             "s_1_t_1_c_1_z_1.czi",
-            b'<Subblocks><Subblock B="0" C="0" S="0"><METADATA><Tags><AcquisitionTime>'
-            b"2019-06-27T18:33:41.1154211Z"
+            b'<?xml version=\'1.0\' encoding=\'utf8\'?>\n<Subblocks><Subblock B="0" C="0" S="0"><METADATA>'
+            b"<Tags><AcquisitionTime>2019-06-27T18:33:41.1154211Z"
             b'</AcquisitionTime><DetectorState><CameraState Id=""><CameraDisplayName>Camera 2 Left'
             b"</CameraDisplayName><ApplyCameraProfile>false</ApplyCameraProfile><ApplyImageOrientation>"
             b"true</ApplyImageOrientation><ExposureTime>10004210.526316</ExposureTime><Frame>"
@@ -369,7 +369,7 @@ def test_read_subblock_meta(data_dir, fname, expected):
             b"+000000042720.2960</StageYPosition><FocusPosition>+000000009801.2900</FocusPosition>"
             b"<RoiCenterOffsetX>+000000000007.0420</RoiCenterOffsetX><RoiCenterOffsetY>"
             b"+000000000000.5420</RoiCenterOffsetY></Tags><DataSchema><ValidBitsPerPixel>16"
-            b"</ValidBitsPerPixel></DataSchema><AttachmentSchema/></METADATA></Subblock></Subblocks>",
+            b"</ValidBitsPerPixel></DataSchema><AttachmentSchema /></METADATA></Subblock></Subblocks>",
         ),
     ],
 )
@@ -377,7 +377,8 @@ def test_read_unified_subblock_meta(data_dir, fname, expected):
     with open(data_dir / fname, "rb") as fp:
         czi = CziFile(czi_filename=fp)
         data = czi.read_subblock_metadata(unified_xml=True)
-        assert expected in etree.tostring(data)
+        ans = ET.tostring(data, encoding='utf8', method='xml')
+        assert expected == ans
 
 
 @pytest.mark.parametrize(
