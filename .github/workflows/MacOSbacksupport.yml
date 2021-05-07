@@ -21,9 +21,6 @@ jobs:
           bash ~/miniconda.sh -b -p $HOME/miniconda
           export PATH=~/miniconda/bin:$PATH
           $HOME/miniconda/bin/conda init bash
-      - name: Build 3.6
-        run: |
-          bash scripts/setupWheelEnv.sh -p 3.6 -f 3_6 -t 10.9
       - name: Build 3.7
         run: |
           bash scripts/setupWheelEnv.sh -p 3.7 -f 3_7 -t 10.9
