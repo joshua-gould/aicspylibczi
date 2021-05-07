@@ -1,11 +1,11 @@
 on:
   push:
     branches:
-      - master
+      - main
   schedule:
     - cron: 0 18 * * 1
 
-name: Python Master Build
+name: Python Main Build
 jobs:
   python-test:
     runs-on: ${{ matrix.os }}

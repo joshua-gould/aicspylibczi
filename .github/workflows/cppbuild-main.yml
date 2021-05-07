@@ -1,11 +1,11 @@
 on:
   push:
     branches:
-      - master
+      - main
   schedule:
     - cron: 0 18 * * 1
 
-name: C++ Master Build
+name: C++ Main Build
 jobs:
   cmake-build:
     runs-on: ${{ matrix.os }}
