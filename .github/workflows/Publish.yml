@@ -1,4 +1,4 @@
-name: Wheel Publish
+name: Wheel Publish (Win)
 on:
   push:
     branches:

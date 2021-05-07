@@ -1,4 +1,4 @@
-name: Wheel build test
+name: Wheel Publish (MacOS)
 on:
   push:
     branches:
