@@ -9,7 +9,7 @@ env:
   CIBW_TEST_COMMAND: pytest aicspylibczi/tests
   CIBW_TEST_EXTRAS: test
 
-name: Python Main Build
+name: Build and Publish
 jobs:
   python-test:
     runs-on: ${{ matrix.os }}
