@@ -8,7 +8,7 @@ on:
 env:
   CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
   CIBW_TEST_EXTRAS: test
-  CIBW_SKIP: cp36-* cp310-* *-win32 pp*-macosx-*
+  CIBW_SKIP: cp36-* cp310-* *-win32 pp*
 
 name: Build and Publish
 jobs:
