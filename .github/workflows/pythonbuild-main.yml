@@ -6,7 +6,7 @@ on:
     - cron: 0 18 * * 1
 
 env:
-  CIBW_TEST_COMMAND: pytest aicspylibczi/tests
+  CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
   CIBW_TEST_EXTRAS: test
   CIBW_SKIP: cp36-*
 
@@ -94,7 +94,7 @@ jobs:
         CIBW_ARCHS_MACOS: auto universal2
         # CIBW_TEST_SKIP: "*universal2:arm64"
         CIBW_TEST_EXTRAS: test
-        CIBW_TEST_COMMAND: pytest aicspylibczi/tests
+        CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
 
     - name: Verify clean directory
       run: git diff --exit-code
