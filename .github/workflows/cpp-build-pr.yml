@@ -1,16 +1,9 @@
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: 0 18 * * 1
-
-name: C++ Main Build
+on: [pull_request]
+name: C++ Build PR
 jobs:
   cmake-build:
     runs-on: ${{ matrix.os }}
     strategy:
-      max-parallel: 6
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         compiler: [llvm, gnu]
@@ -38,6 +31,7 @@ jobs:
           CXX: g++
           RUN_TESTS: true
         run: |
+          pwd
           mkdir ./cmake-build-debug
           cd cmake-build-debug
           cmake ../

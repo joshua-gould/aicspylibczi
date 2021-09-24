@@ -1,5 +1,5 @@
 on: [pull_request]
-name: Python Build
+name: Python Build PR
 jobs:
   python-test:
     runs-on: ${{ matrix.os }}
@@ -24,7 +24,8 @@ jobs:
       - name: Test with pytest
         run: |
           pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
-          codecov -t ${{ secrets.CodeCovKey }}
+      - name: Upload codecov
+        uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - release/aicspylibczi
 
 jobs:
   docs:
@@ -16,8 +15,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.7
-      - name: Install Depenencies
+          python-version: 3.9
+      - name: Install Dependencies
         run: |
           pip install --upgrade pip
           pip install .[dev]
