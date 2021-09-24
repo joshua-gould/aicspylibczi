@@ -27,7 +27,7 @@ test_requirements = [
 ]
 
 dev_requirements = [
-    "bumpversion>=0.5.3",
+    "bump2version>=1.0.1",
     "coverage>=5.0a4",
     "flake8>=3.7.7",
     "ipython>=7.5.0",
