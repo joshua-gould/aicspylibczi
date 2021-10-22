@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - fix/linux-wheel-needs-zlib
   schedule:
     - cron: 0 18 * * 1
 
@@ -91,7 +91,7 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.1.2
       env:
-        CIBW_BEFORE_ALL_LINUX: apt install -y zlib1g-dev
+        CIBW_BEFORE_ALL_LINUX: apt-get install -y zlib1g-dev
         CIBW_ARCHS_MACOS: auto universal2
         # CIBW_TEST_SKIP: "*universal2:arm64"
         CIBW_TEST_EXTRAS: test
