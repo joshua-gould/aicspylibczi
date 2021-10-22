@@ -31,9 +31,11 @@ ENDIF(WIN32)
 
 SET(pybind11_DIR pybind11)
 
-add_compile_definitions(_STATICLIBBUILD)
-add_subdirectory(libCZI/Src/JxrDecode)
-add_subdirectory(libCZI/Src/libCZI)
+add_compile_definitions(_LIBCZISTATICLIB)
+add_compile_definitions(LIBCZI_BUILD_UNITTESTS=OFF)
+add_compile_definitions(LIBCZI_BUILD_DYNLIB=OFF)
+add_compile_definitions(LIBCZI_BUILD_CZICMD=OFF)
+add_subdirectory(libCZI)
 add_subdirectory(pybind11)
 
 include_directories(libCZI/Src)
