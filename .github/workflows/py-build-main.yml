@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - fix/linux-wheel-needs-zlib
+      - main
   schedule:
     - cron: 0 18 * * 1
 
@@ -77,7 +77,7 @@ jobs:
 
   build_wheels:
     name: Wheels on ${{ matrix.os }}
-    # needs: [python-test, lint]
+    needs: [python-test, lint]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
