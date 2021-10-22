@@ -91,7 +91,7 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.1.2
       env:
-        CIBW_BEFORE_ALL_LINUX: yum install -y zlib1g-dev
+        CIBW_BEFORE_ALL_LINUX: yum install -y zlib-devel
         CIBW_ARCHS_MACOS: auto universal2
         # CIBW_TEST_SKIP: "*universal2:arm64"
         CIBW_TEST_EXTRAS: test
