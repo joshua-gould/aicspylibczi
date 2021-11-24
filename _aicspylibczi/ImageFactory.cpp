@@ -132,7 +132,7 @@ ImageFactory::sizeOfPixelType(PixelType pixel_type_)
     case PixelType::Bgr96Float:
       return sizeof(float);
     default:
-      throw PixelTypeException(pixel_type_, "Pixel Type unsupported by libCZI.");
+      throw PixelTypeException(pixel_type_, "sizeOfPixelType: Pixel Type unsupported by libCZI.");
   }
 }
 
@@ -149,8 +149,10 @@ ImageFactory::numberOfSamples(libCZI::PixelType pixel_type_)
     case PixelType::Bgr48:
     case PixelType::Bgr96Float:
       return 3;
+    case PixelType::Invalid:
+      return 0;
     default:
-      throw PixelTypeException(pixel_type_, "Pixel Type unsupported by libCZI.");
+      throw PixelTypeException(pixel_type_, "numberOfSamples: Pixel Type unsupported by libCZI.");
   }
 }
 
