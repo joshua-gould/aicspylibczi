@@ -355,7 +355,7 @@ private:
   libCZI::IntRect getSceneYXSize(int scene_index_ = -1)
   {
     std::vector<libCZI::IntRect> matches = getAllSceneYXSize(scene_index_);
-    return matches.front();
+    return matches.empty() ? libCZI::IntRect{ 0,0,0,0 } : matches.front();
   }
 
   /*!
