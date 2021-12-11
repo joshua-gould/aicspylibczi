@@ -2,6 +2,7 @@ on: [pull_request]
 name: C++ Build PR
 jobs:
   cmake-build:
+    name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -13,28 +14,23 @@ jobs:
             cc: "cl", cxx: "cl",
           }
         - {
-            name: "windows-latest gnu",
-            os: windows-latest,
-            cc: "gcc-9", cxx: "g++-9",
-          }
-        - {
-            name: "windows-latest clang",
-            os: windows-latest,
-            cc: "clang-13", cxx: "clang++-13",
-          }
-        - {
             name: "ubuntu-latest gnu",
             os: ubuntu-latest,
-            cc: "gcc-9", cxx: "g++-9",
+            cc: "gcc", cxx: "g++",
           }
         - {
             name: "ubuntu-latest clang",
             os: ubuntu-latest,
-            cc: "clang-13", cxx: "clang++-13",
+            cc: "clang", cxx: "clang++",
           }
         - {
-            name: "macos-latest clang",
-            os: macos-latest,
+            name: "macos-10.15 clang",
+            os: macos-10.15,
+            cc: "clang", cxx: "clang++"
+          }
+        - {
+            name: "macos-11.0 clang",
+            os: macos-11.0,
             cc: "clang", cxx: "clang++"
           }
     steps:
