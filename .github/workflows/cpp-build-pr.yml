@@ -27,8 +27,8 @@ jobs:
       - name: gnu build and test
         if: matrix.compiler == 'gnu'
         env:
-          CC: gcc
-          CXX: g++
+          CC: gcc-9
+          CXX: g++-9
           RUN_TESTS: true
         run: |
           pwd
