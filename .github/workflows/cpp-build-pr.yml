@@ -5,33 +5,47 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        compiler: [llvm, gnu]
-
+        config:
+        - {
+            name: "windows-latest msvc",
+            os: windows-latest,
+            cc: "cl", cxx: "cl",
+          }
+        - {
+            name: "windows-latest gnu",
+            os: windows-latest,
+            cc: "gcc-9", cxx: "g++-9",
+          }
+        - {
+            name: "windows-latest clang",
+            os: windows-latest,
+            cc: "clang-13", cxx: "clang++-13",
+          }
+        - {
+            name: "ubuntu-latest gnu",
+            os: ubuntu-latest,
+            cc: "gcc-9", cxx: "g++-9",
+          }
+        - {
+            name: "ubuntu-latest clang",
+            os: ubuntu-latest,
+            cc: "clang-13", cxx: "clang++-13",
+          }
+        - {
+            name: "macos-latest clang",
+            os: macos-latest,
+            cc: "clang", cxx: "clang++"
+          }
     steps:
       - uses: actions/checkout@v1
         with:
           submodules: true
-      - name: llvm build and test
-        if: matrix.compiler == 'llvm'
+      - name: build and test
         env:
-          CC: clang-11
-          CXX: clang++-11
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
           RUN_TESTS: true
         run: |
-          mkdir ./cmake-build-debug
-          cd cmake-build-debug
-          cmake ../
-          cmake --build . --target test_libczi_c++_extension
-        shell: bash
-      - name: gnu build and test
-        if: matrix.compiler == 'gnu'
-        env:
-          CC: gcc-9
-          CXX: g++-9
-          RUN_TESTS: true
-        run: |
-          pwd
           mkdir ./cmake-build-debug
           cd cmake-build-debug
           cmake ../
