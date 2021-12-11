@@ -21,8 +21,8 @@ jobs:
       - name: llvm build and test
         if: matrix.compiler == 'llvm'
         env:
-          CC: clang
-          CXX: clang++
+          CC: clang-10
+          CXX: clang++-10
           RUN_TESTS: true
         run: |
           mkdir ./cmake-build-debug
