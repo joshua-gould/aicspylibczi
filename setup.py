@@ -31,7 +31,7 @@ dev_requirements = [
     "coverage>=5.0a4",
     "flake8>=3.7.7",
     "ipython>=7.5.0",
-    "m2r>=0.2.1",
+    "m2r2>=0.2.7",
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
