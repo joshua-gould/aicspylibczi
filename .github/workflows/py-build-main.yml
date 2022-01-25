@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-10.15, macos-11]
 
     steps:
     - uses: actions/checkout@v2
@@ -92,7 +92,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.1.2
       env:
         CIBW_BEFORE_ALL_LINUX: yum install -y zlib-devel libpng-devel
-        CIBW_ARCHS_MACOS: x86_64 arm64
+        CIBW_ARCHS_MACOS: x86_64 universal2
         CIBW_TEST_EXTRAS: test
         CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
 
