@@ -30,7 +30,7 @@ memoryToNpArray(pylibczi::ImagesContainerBase* bptr_, std::vector<std::pair<char
 {
   pylibczi::ImagesContainer<T>* tptr = bptr_->getBaseAsTyped<T>();
 
-  std::vector<ssize_t> shape(charSizes_.size(), 0);
+  std::vector<Py_ssize_t> shape(charSizes_.size(), 0);
   std::transform(
     charSizes_.begin(), charSizes_.end(), shape.begin(), [](const std::pair<char, size_t>& a_) { return a_.second; });
 
