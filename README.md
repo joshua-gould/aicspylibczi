@@ -160,7 +160,7 @@ the original work.
 
 ## Licenses & Acknowledgements
 
-This project however was created from a fork of pylibczi as explained above in the history section and Paul Watkins
+This project was created from a fork of pylibczi as explained above in the history section and Paul Watkins
 is a developer on our repo as well. Pylibczi, from
 the [Center of Advanced European Studies And Research](https://www.caesar.de/en/about-caesar/)
 and the core dependency libCZI, are covered by the GPLv3 license.
