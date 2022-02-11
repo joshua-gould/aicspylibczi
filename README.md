@@ -3,7 +3,7 @@
 [![C++ Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/C%2B%2B%20Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
 [![Python Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/Python%20Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
 [![codecov](https://codecov.io/gh/AllenCellModeling/aicspylibczi/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicspylibczi)
-[![License: BSD3/GPLv3](https://img.shields.io/badge/License-BSD3/GPLv3-blue.svg)](https://github.com/AllenCellModeling/aicspylibczi/blob/master/LICENSE)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/AllenCellModeling/aicspylibczi/blob/master/LICENSE)
 
 Python module to expose [libCZI](https://github.com/zeiss-microscopy/libCZI) functionality for reading (subset of) Zeiss
 CZI files and meta-data. We only support 64bit architectures currently if you desperately need 32 bit support please make an issue or modify the source and build it for your use case.
@@ -159,9 +159,6 @@ We intend for this work to be merged back into the original project once we have
 the original work.
 
 ## Licenses & Acknowledgements
-
-The code directly in this repo implemented in C++ and Python is covered by BSD-3 license by the [Allen Institute for
-Cell Science](https://www.allencell.org/what-we-do.html) at the [Allen Institute](https://alleninstitute.org/).
 
 This project however was created from a fork of pylibczi as explained above in the history section and Paul Watkins
 is a developer on our repo as well. Pylibczi, from
