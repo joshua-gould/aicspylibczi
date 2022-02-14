@@ -29,8 +29,8 @@ jobs:
             cc: "clang", cxx: "clang++"
           }
         - {
-            name: "macos-11.0 clang",
-            os: macos-11.0,
+            name: "macos-latest clang",
+            os: macos-latest,
             cc: "clang", cxx: "clang++"
           }
     steps:
