@@ -48,4 +48,10 @@ $ bump2version patch # possible: major / minor / patch
 $ git push
 $ git push --tags
 
+Or run 
+
+$ bump2version release
+
+to generate a release build version.
+
 After all builds pass, GitHub Actions will automatically publish to PyPI.
