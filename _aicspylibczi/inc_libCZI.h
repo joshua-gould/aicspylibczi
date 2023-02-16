@@ -39,7 +39,6 @@
 #include "libCZI/stdAllocator.h"
 
 #include "libCZI/CziSubBlockDirectory.h"
-#include "libCZI/StreamImpl.h"
 
 #include "libCZI/libCZI_DimCoordinate.h"
 #include "libCZI/libCZI_Utilities.h"
