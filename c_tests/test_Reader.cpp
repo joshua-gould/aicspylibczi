@@ -6,7 +6,10 @@
 #include "catch.hpp"
 
 #include "../_aicspylibczi/Reader.h"
+#include "../_aicspylibczi/SubblockSortable.h"
 #include "../_aicspylibczi/pb_helpers.h"
+
+#include "libCZI/StreamImpl.h"
 
 #define CORES_FOR_THREADS 1 // for local testing increase this but for GH Actions it must be 1
 
@@ -641,7 +644,7 @@ TEST_CASE_METHOD(CziCreatorOrder, "test_image_order", "[Reader_image_order]")
            imCont.first->images().end(),
            [&last_im](std::shared_ptr<pylibczi::Image>& img) {
              REQUIRE(0 < ((int)(img->ptr_address() - last_im->ptr_address())));
-             REQUIRE(pylibczi::SubblockSortable::aLessThanB(last_im->coordinatePtr(), img->coordinatePtr()));
+             REQUIRE(pylibczi::SubblockSortable::aLessThanB(*last_im->coordinatePtr(), *img->coordinatePtr()));
              last_im = img;
            });
 }

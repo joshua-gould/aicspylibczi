@@ -11,6 +11,8 @@
 
 #include "inc_libCZI.h"
 
+#include <fstream>
+
 namespace pylibczi {
 /// <summary>	A simplistic stream implementation (based on C++ streams). Note that this implementation is NOT
 /// thread-safe.</summary>

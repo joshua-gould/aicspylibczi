@@ -7,7 +7,7 @@ add_compile_definitions(_STATICLIBBUILD)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 #add_subdirectory(../pybind11)
-include_directories(../_aicspylibczi ../pybind11/include)
+include_directories(../_aicspylibczi ../pybind11/include ${CMAKE_BINARY_DIR}/libCZI/Src/libCZI)
 add_executable(${TARGET_NAME} ${UNIT_TEST_SOURCE_LIST})
 target_link_libraries(${TARGET_NAME} PRIVATE libczi_c++_extension libCZIStatic JxrDecodeStatic pybind11::embed)
 add_dependencies(${TARGET_NAME} libczi_c++_extension libCZIStatic JxrDecodeStatic )

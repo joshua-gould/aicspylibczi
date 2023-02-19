@@ -38,8 +38,6 @@ add_compile_definitions(LIBCZI_BUILD_CZICMD=OFF)
 add_subdirectory(libCZI)
 add_subdirectory(pybind11)
 
-include_directories(libCZI/Src)
-#find_library(libCZI REQUIRED PATHS ${CMAKE_SOURCE_DIR}/libCZI)
 find_package(pybind11)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
@@ -62,13 +60,15 @@ set(TARGET_ONE libczi_c++_extension)
 set(TARGET_TWO _aicspylibczi)
 set(TARGET_THREE profile_me)
 
-set_target_properties(libCZI PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 add_library(${TARGET_ONE} STATIC ${PYLIBCZI_C_SRC} ${PYLIBCZI_C_SRC_HEADERS})
+target_include_directories(${TARGET_ONE} PUBLIC ${CMAKE_SOURCE_DIR}/libCZI/Src)
 target_link_libraries(${TARGET_ONE} INTERFACE libCZIStatic JxrDecodeStatic)
 add_dependencies(${TARGET_ONE} libCZIStatic JxrDecodeStatic)
 
 pybind11_add_module(${TARGET_TWO} MODULE ${PYLIBCZI_C_SRC} ${PYLIBCZI_PYBIND11})
+target_include_directories(${TARGET_TWO} PUBLIC ${CMAKE_SOURCE_DIR}/libCZI/Src)
 target_link_libraries(${TARGET_TWO} PRIVATE libCZIStatic JxrDecodeStatic)
+add_dependencies(${TARGET_TWO} libCZIStatic JxrDecodeStatic)
 add_custom_command(TARGET ${TARGET_TWO} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${TARGET_TWO}> ${PROJECT_SOURCE_DIR}
         )
