@@ -1,0 +1,8 @@
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+
+include CMakeLists.txt
+recursive-include _aicspylibczi *.cpp *.h *.hpp *.c *.py *.pyx *.pxd *.pxi *.pyd *.dll *.so *.d
+recursive-include libCZI *
+recursive-include pybind11 *
