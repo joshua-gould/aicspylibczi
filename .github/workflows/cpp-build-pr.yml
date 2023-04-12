@@ -24,11 +24,6 @@ jobs:
             cc: "clang", cxx: "clang++",
           }
         - {
-            name: "macos-12 clang",
-            os: macos-12,
-            cc: "clang", cxx: "clang++"
-          }
-        - {
             name: "macos-latest clang",
             os: macos-latest,
             cc: "clang", cxx: "clang++"
