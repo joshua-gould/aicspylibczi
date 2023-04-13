@@ -27,7 +27,7 @@ jobs:
       - name: Build the sdist
         run: pipx run build --sdist
       - name: Check install from sdist
-        run: pip install dist/*.tar.gz
+        run: pip install --force-reinstall --no-index --find-links=./dist aicspylibczi
 
       - name: Upload codecov
         uses: codecov/codecov-action@v3
