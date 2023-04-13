@@ -27,7 +27,7 @@ jobs:
       - name: Build the sdist
         run: pipx run build --sdist
       - name: Check install from sdist
-        run: pip install dist/*
+        run: pip install dist/*.tar.gz
 
       - name: Upload codecov
         uses: codecov/codecov-action@v3
