@@ -24,6 +24,13 @@ jobs:
       - name: Test with pytest
         run: |
           pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
+      - name: Build the sdist
+        run: pipx run build --sdist
+      - name: Check install from sdist
+        run: |
+          MY_VERSION=$(python setup.py --version)
+          pip install dist/aicspylibczi-$MY_VERSION.tar.gz
+        shell: bash
       - name: Upload codecov
         uses: codecov/codecov-action@v3
 

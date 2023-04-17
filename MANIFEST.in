@@ -3,6 +3,8 @@ include LICENSE
 include README.md
 
 include CMakeLists.txt
+include main.cpp
+recursive-include c_tests *.txt *.cpp *.h *.hpp *.c *.py *.pyx *.pxd *.pxi *.pyd *.dll *.so *.d
 recursive-include _aicspylibczi *.cpp *.h *.hpp *.c *.py *.pyx *.pxd *.pxi *.pyd *.dll *.so *.d
 recursive-include libCZI *
 recursive-include pybind11 *

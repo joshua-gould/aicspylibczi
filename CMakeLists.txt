@@ -29,7 +29,7 @@ ELSE()
 
 ENDIF(WIN32)
 
-SET(pybind11_DIR pybind11)
+SET(pybind11_DIR ${CMAKE_CURRENT_LIST_DIR}/pybind11)
 
 add_compile_definitions(_LIBCZISTATICLIB)
 add_compile_definitions(LIBCZI_BUILD_UNITTESTS=OFF)
@@ -38,7 +38,6 @@ add_compile_definitions(LIBCZI_BUILD_CZICMD=OFF)
 add_subdirectory(libCZI)
 add_subdirectory(pybind11)
 
-find_package(pybind11)
 message(STATUS "Found pybind11 v${pybind11_VERSION}: ${pybind11_INCLUDE_DIRS}")
 
 set(PYLIBCZI_C_SRC_HEADERS _aicspylibczi/Reader.h _aicspylibczi/helper_algorithms.h _aicspylibczi/exceptions.h _aicspylibczi/inc_libCZI.h
