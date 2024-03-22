@@ -20,7 +20,7 @@ Reader::Reader(std::shared_ptr<libCZI::IStream> istream_)
   : m_czireader(new CCZIReader)
   , m_specifyScene(true)
 {
-  m_czireader->Open(std::move(istream_));
+  m_czireader->Open(std::move(istream_), nullptr);
   m_statistics = m_czireader->GetStatistics();
   m_pixelType = libCZI::PixelType::Invalid; // get the pixeltype of the first readable subblock
 
@@ -34,7 +34,7 @@ Reader::Reader(const wchar_t* file_name_)
 {
   std::shared_ptr<libCZI::IStream> sp;
   sp = std::shared_ptr<libCZI::IStream>(new StreamImplLockingRead(file_name_));
-  m_czireader->Open(sp);
+  m_czireader->Open(sp, nullptr);
   m_statistics = m_czireader->GetStatistics();
   // create a reference for finding one or more subblock indices from a CDimCoordinate
   checkSceneShapes();
@@ -516,7 +516,10 @@ Reader::tileBoundingBoxesWith(SubblockSortable& subblocksToFind_)
   auto extractor = [&](const SubblockIndexVec::value_type& match_) {
     auto subblk = m_czireader->ReadSubBlock(match_.second);
     auto sbkInfo = subblk->GetSubBlockInfo();
-    return TileBBoxMap::value_type(match_.first, sbkInfo.logicalRect);
+    libCZI::IntRect sbkRect = sbkInfo.logicalRect;
+    sbkRect.w = sbkInfo.physicalSize.w;
+    sbkRect.h = sbkInfo.physicalSize.h;
+    return TileBBoxMap::value_type(match_.first, sbkRect);
   };
 
   transform(matches.begin(), matches.end(), std::inserter(ans, ans.end()), extractor);
