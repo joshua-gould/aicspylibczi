@@ -516,10 +516,7 @@ Reader::tileBoundingBoxesWith(SubblockSortable& subblocksToFind_)
   auto extractor = [&](const SubblockIndexVec::value_type& match_) {
     auto subblk = m_czireader->ReadSubBlock(match_.second);
     auto sbkInfo = subblk->GetSubBlockInfo();
-    libCZI::IntRect sbkRect = sbkInfo.logicalRect;
-    sbkRect.w = sbkInfo.physicalSize.w;
-    sbkRect.h = sbkInfo.physicalSize.h;
-    return TileBBoxMap::value_type(match_.first, sbkRect);
+    return TileBBoxMap::value_type(match_.first, sbkInfo.logicalRect);
   };
 
   transform(matches.begin(), matches.end(), std::inserter(ans, ans.end()), extractor);
