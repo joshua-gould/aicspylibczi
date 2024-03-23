@@ -35,7 +35,7 @@ jobs:
         run: |
           pytest --cov-report xml --cov=aicspylibczi aicspylibczi/tests
       - name: Upload codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   lint:
     runs-on: ubuntu-latest

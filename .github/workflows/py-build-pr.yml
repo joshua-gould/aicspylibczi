@@ -32,7 +32,7 @@ jobs:
           pip install dist/aicspylibczi-$MY_VERSION.tar.gz
         shell: bash
       - name: Upload codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
 
   lint:
     runs-on: ubuntu-latest
