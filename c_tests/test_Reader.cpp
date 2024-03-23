@@ -99,7 +99,7 @@ public:
   CziCreatorIStream()
     : m_czi()
   {
-    auto fp = std::shared_ptr<libCZI::IStream>(new CSimpleInputOutputStreamImpl(L"resources/s_1_t_1_c_1_z_1.czi"));
+    auto fp = std::shared_ptr<libCZI::IInputOutputStream>(libCZI::CreateInputOutputStreamForFile(L"resources/s_1_t_1_c_1_z_1.czi"));
     m_czi = std::make_unique<pylibczi::Reader>(fp);
   }
   pylibczi::Reader* get() { return m_czi.get(); }
