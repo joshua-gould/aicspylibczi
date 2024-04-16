@@ -61,20 +61,19 @@ jobs:
     needs: [python-test, lint]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
-    - name: Build SDist
-      run: pipx run build --sdist
+      - name: Build SDist
+        run: pipx run build --sdist
 
-    - name: Check metadata
-      run: pipx run twine check dist/*
+      - name: Check metadata
+        run: pipx run twine check dist/*
 
-    - uses: actions/upload-artifact@v3
-      with:
-        path: dist/*.tar.gz
-
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
 
   build_wheels:
     name: Wheels on ${{ matrix.cibw-arch }}
@@ -96,26 +95,26 @@ jobs:
             cibw-arch: win_amd64
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
-    - uses: pypa/cibuildwheel@v2.12.1
-      env:
-        CIBW_BUILD: "*-${{ matrix.cibw-arch }}"
-        CIBW_BEFORE_ALL_LINUX: yum install -y zlib-devel libpng-devel
-        CIBW_TEST_EXTRAS: test
-        CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
-        CIBW_ARCHS_MACOS: x86_64 universal2 arm64
-        CMAKE_OSX_ARCHITECTURES: ${{ matrix.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}
-    - name: Verify clean directory
-      run: git diff --exit-code
-      shell: bash
+      - uses: pypa/cibuildwheel@v2.17.0
+        env:
+          CIBW_BUILD: "*-${{ matrix.cibw-arch }}"
+          CIBW_BEFORE_ALL_LINUX: yum install -y zlib-devel libpng-devel
+          CIBW_TEST_EXTRAS: test
+          CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
+          CIBW_ARCHS_MACOS: x86_64 universal2 arm64
+          CMAKE_OSX_ARCHITECTURES: ${{ matrix.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}
+      - name: Verify clean directory
+        run: git diff --exit-code
+        shell: bash
 
-    - name: Upload wheels
-      uses: actions/upload-artifact@v3
-      with:
-        path: wheelhouse/*.whl
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
 
   upload_all:
     name: Upload if release
@@ -124,14 +123,14 @@ jobs:
     if: "contains(github.event.head_commit.message, 'Bump version')"
 
     steps:
-    - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
 
-    - uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: dist
 
-    - uses: pypa/gh-action-pypi-publish@v1.4.2
-      with:
-        user: aicspypi
-        password: ${{ secrets.PYPI_TOKEN }}
+      - uses: pypa/gh-action-pypi-publish@v1.4.2
+        with:
+          user: aicspypi
+          password: ${{ secrets.PYPI_TOKEN }}
