@@ -22,13 +22,17 @@ CSimpleStreamImplFromFd::CSimpleStreamImplFromFd(int file_descriptor_)
   std::cout << "CSimpleStreamImplFromFd::CSimpleStreamImplFromFd(" << file_descriptor_ << ")" << std::endl;
 #ifdef _WIN32
   int dupDesc = _dup(file_descriptor_);
+  if (dupDesc == -1) {
+    throw pylibczi::FilePtrException("Reader class could not dup the file descriptor!");
+  }
   m_fp = _fdopen(dupDesc, "r");
 #else
   int dupDesc = dup(file_descriptor_);
   m_fp = fdopen(dupDesc, "r");
 #endif
-  if (m_fp == nullptr)
+  if (m_fp == nullptr) {
     throw pylibczi::FilePtrException("Reader class received a bad FILE *!");
+  }
 }
 
 void
