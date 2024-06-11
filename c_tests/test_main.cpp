@@ -4,10 +4,10 @@
 
 namespace py = pybind11;
 
+py::scoped_interpreter guard{};
 
 TEST_CASE("cast_test", "Is FILE * default constructible")
 {
-  py::scoped_interpreter guard{};
 
   REQUIRE(std::is_default_constructible<FILE*>());
   // REQUIRE(std::is_default_constructible<std::istream>()); // istream is NOT
