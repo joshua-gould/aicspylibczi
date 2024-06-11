@@ -131,7 +131,7 @@ TypedImage<T>::loadImage(const std::shared_ptr<libCZI::IBitmapData>& bitmap_ptr_
     // This mostly handles scaled mosaic images
     size_t pixelsPerRow = samples_per_pixel_ * size_.w;
     size_t bytesPerRow = pixelsPerRow * sizeof(T);
-    for (int j = 0; j < size_.h; j++) {
+    for (uint32_t j = 0; j < size_.h; j++) {
       std::memcpy(
         m_array + j * pixelsPerRow, (void*)((char*)(lckScoped.ptrDataRoi) + j * lckScoped.stride), bytesPerRow);
     }

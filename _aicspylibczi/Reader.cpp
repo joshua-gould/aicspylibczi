@@ -112,7 +112,7 @@ Reader::dimSizes()
 
   pixelType();
   if (ImageFactory::numberOfSamples(m_pixelType) > 1)
-    ans.push_back(ImageFactory::numberOfSamples(m_pixelType));
+    ans.push_back((int)ImageFactory::numberOfSamples(m_pixelType));
 
   return ans;
 }
@@ -378,7 +378,6 @@ Reader::readSubblockMeta(libCZI::CDimCoordinate& plane_coord_, int index_m_)
   return metaSubblocks;
 }
 
-
 // private methods
 
 Reader::SubblockIndexVec
@@ -443,7 +442,10 @@ Reader::isValidRegion(const libCZI::IntRect& in_box_, const libCZI::IntRect& czi
 }
 
 ImagesContainerBase::ImagesContainerBasePtr
-Reader::readMosaic(libCZI::CDimCoordinate plane_coord_, float scale_factor_, libCZI::IntRect im_box_, libCZI::RgbFloatColor backGroundColor_)
+Reader::readMosaic(libCZI::CDimCoordinate plane_coord_,
+                   float scale_factor_,
+                   libCZI::IntRect im_box_,
+                   libCZI::RgbFloatColor backGroundColor_)
 {
   // handle the case where the function was called with region=None (default to all)
   if (im_box_.w == -1 && im_box_.h == -1)
@@ -470,8 +472,7 @@ Reader::readMosaic(libCZI::CDimCoordinate plane_coord_, float scale_factor_, lib
   options.backGroundColor = backGroundColor_;
 
   // multiTile accessor is not compatible with S, it composites the Scenes and the mIndexs together
-  auto multiTileComposite = accessor->Get(im_box_, &plane_coord_, scale_factor_,
-                                         &options);
+  auto multiTileComposite = accessor->Get(im_box_, &plane_coord_, scale_factor_, &options);
 
   libCZI::IntSize size = multiTileComposite->GetSize();
   size_t pixels_in_image = size.h * size.w * bgrScaling;
