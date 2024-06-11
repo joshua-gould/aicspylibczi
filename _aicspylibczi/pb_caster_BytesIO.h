@@ -26,6 +26,7 @@ public:
    */
   bool load(handle src_, bool)
   {
+    std::cout << "load called with " << src_.ptr() << std::endl;
     /* Extract PyObject from handle */
     PyObject* source = src_.ptr();
 
