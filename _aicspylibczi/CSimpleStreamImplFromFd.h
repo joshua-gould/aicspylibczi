@@ -22,6 +22,7 @@ class CSimpleStreamImplFromFd : public libCZI::IStream
 {
 private:
   FILE* m_fp;
+  std::mutex m_mutex;
 
 public:
   CSimpleStreamImplFromFd() = delete;
