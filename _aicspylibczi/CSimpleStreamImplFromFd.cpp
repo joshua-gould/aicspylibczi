@@ -19,7 +19,6 @@ namespace pb_helpers {
 CSimpleStreamImplFromFd::CSimpleStreamImplFromFd(int file_descriptor_)
   : libCZI::IStream()
 {
-  std::cout << "CSimpleStreamImplFromFd::CSimpleStreamImplFromFd(" << file_descriptor_ << ")" << std::endl;
 #ifdef _WIN32
   int dupDesc = _dup(file_descriptor_);
   if (dupDesc == -1) {
