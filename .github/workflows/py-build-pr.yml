@@ -23,7 +23,7 @@ jobs:
           pip install .[test]
       - name: Test with pytest
         run: |
-          pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
+          pytest --cov-report xml --cov=aicspylibczi aicspylibczi/tests
       - name: Build the sdist
         run: pipx run build --sdist
       - name: Check install from sdist
