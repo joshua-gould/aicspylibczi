@@ -22,7 +22,6 @@ test_requirements = [
     "pytest",
     "pytest-cov",
     "pytest-raises",
-    "pytest-xdist",
 ]
 
 dev_requirements = [

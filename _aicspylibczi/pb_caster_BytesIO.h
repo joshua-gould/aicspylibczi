@@ -20,7 +20,7 @@ public:
   PYBIND11_TYPE_CASTER(std::shared_ptr<libCZI::IStream>, _("IOBufferedReader"));
 
   /**
-   * Conversion part 1 (Python->C++): convert a PyObject into a inty
+   * Conversion part 1 (Python->C++): convert a PyObject into a std::shared_ptr<libCZI::IStream>
    * instance or return false upon failure. The second argument
    * indicates whether implicit conversions should be applied.
    */

@@ -21,13 +21,17 @@ CSimpleStreamImplFromFd::CSimpleStreamImplFromFd(int file_descriptor_)
 {
 #ifdef _WIN32
   int dupDesc = _dup(file_descriptor_);
+  if (dupDesc == -1) {
+    throw pylibczi::FilePtrException("Reader class could not dup the file descriptor!");
+  }
   m_fp = _fdopen(dupDesc, "r");
 #else
   int dupDesc = dup(file_descriptor_);
   m_fp = fdopen(dupDesc, "r");
 #endif
-  if (m_fp == nullptr)
+  if (m_fp == nullptr) {
     throw pylibczi::FilePtrException("Reader class received a bad FILE *!");
+  }
 }
 
 void
@@ -38,10 +42,16 @@ CSimpleStreamImplFromFd::Read(std::uint64_t offset_,
 {
   std::unique_lock<std::mutex> lck(m_mutex);
 #ifdef _WIN32
-  _fseeki64(this->m_fp, offset_, SEEK_SET);
+  int r = _fseeki64(this->m_fp, offset_, SEEK_SET);
 #else
-  fseeko(this->m_fp, offset_, SEEK_SET);
+  int r = fseeko(this->m_fp, offset_, SEEK_SET);
 #endif
+  if (r != 0) {
+    const auto err = errno;
+    ostringstream ss;
+    ss << "Seek to file-position " << offset_ << " failed, errno=<<" << err << ".";
+    throw std::runtime_error(ss.str());
+  }
   std::uint64_t bytesRead = fread(data_ptr_, 1, (size_t)size_, this->m_fp);
   if (bytes_read_ptr_ != nullptr)
     (*bytes_read_ptr_) = bytesRead;

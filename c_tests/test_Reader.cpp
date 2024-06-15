@@ -65,7 +65,8 @@ class CziCreator
 public:
   CziCreator()
     : m_czi(new pylibczi::Reader(L"resources/s_1_t_1_c_1_z_1.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -76,7 +77,8 @@ class CziCreator2
 public:
   CziCreator2()
     : m_czi(new pylibczi::Reader(L"resources/s_3_t_1_c_3_z_5.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -87,7 +89,8 @@ class CziCreatorOrder
 public:
   CziCreatorOrder()
     : m_czi(new pylibczi::Reader(L"resources/CD_s_1_t_3_c_2_z_5.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -99,7 +102,8 @@ public:
   CziCreatorIStream()
     : m_czi()
   {
-    auto fp = std::shared_ptr<libCZI::IInputOutputStream>(libCZI::CreateInputOutputStreamForFile(L"resources/s_1_t_1_c_1_z_1.czi"));
+    auto fp = std::shared_ptr<libCZI::IInputOutputStream>(
+      libCZI::CreateInputOutputStreamForFile(L"resources/s_1_t_1_c_1_z_1.czi"));
     m_czi = std::make_unique<pylibczi::Reader>(fp);
   }
   pylibczi::Reader* get() { return m_czi.get(); }
@@ -114,7 +118,8 @@ class CziCreatorBig
 public:
   CziCreatorBig()
     : m_czi(new pylibczi::Reader(L"/Users/jamies/Data/20190425_S08_001-04-Scene-4-P3-B03.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -125,7 +130,8 @@ class CziCreatorBigM
 public:
   CziCreatorBigM()
     : m_czi(new pylibczi::Reader(L"/Users/jamies/Data/20190614_C01_001.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 #endif
@@ -137,7 +143,8 @@ class CziCreator4
 public:
   CziCreator4()
     : m_czi(new pylibczi::Reader(L"resources/s_1_t_10_c_3_z_1.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -148,7 +155,8 @@ class CziCreator5
 public:
   CziCreator5()
     : m_czi(new pylibczi::Reader(L"resources/Multiscene_CZI_3Scenes.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -159,7 +167,8 @@ class CziCreatorTiles
 public:
   CziCreatorTiles()
     : m_czi(new pylibczi::Reader(L"resources/tiles.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -170,7 +179,8 @@ class CziCreatorTilesTZ
 public:
   CziCreatorTilesTZ()
     : m_czi(new pylibczi::Reader(L"resources/tiles_time_z.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -181,7 +191,8 @@ class CziCreatorTilesZ
 public:
   CziCreatorTilesZ()
     : m_czi(new pylibczi::Reader(L"resources/tiles_z.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -321,7 +332,8 @@ class CziMCreator
 public:
   CziMCreator()
     : m_czi(new pylibczi::Reader(L"resources/mosaic_test.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 
@@ -385,7 +397,7 @@ TEST_CASE_METHOD(CziMCreator, "test_mosaic_readScaled", "[Reader_mosaic_readScal
 {
   auto czi = get();
   auto c_dims = libCZI::CDimCoordinate{ { libCZI::DimensionIndex::C, 0 } };
-  auto imCont = czi->readMosaic(c_dims, 0.1);
+  auto imCont = czi->readMosaic(c_dims, 0.1f);
   auto imvec = imCont->images();
   REQUIRE(imvec.size() == 1);
 }
@@ -414,7 +426,8 @@ class CziBgrCreator
 public:
   CziBgrCreator()
     : m_czi(new pylibczi::Reader(L"resources/RGB-8bit.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
   const std::vector<int>& planeZeroFirstTen() { return m_firstPlaneFirstTen; }
   const std::vector<int>& planeOneFirstTen() { return m_secondPlaneFirstTen; }
@@ -532,7 +545,8 @@ class CziBgrCreator2
 public:
   CziBgrCreator2()
     : m_czi(new pylibczi::Reader(L"resources/RGB-multichannel.czi"))
-  {}
+  {
+  }
   pylibczi::Reader* get() { return m_czi.get(); }
 };
 

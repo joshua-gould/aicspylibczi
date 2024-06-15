@@ -6,7 +6,7 @@ jobs:
     strategy:
       max-parallel: 6
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10", 3.11]
+        python-version: [3.8, 3.9, "3.10", 3.11, 3.12]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
@@ -19,11 +19,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install aicspylibczi
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
           pip install .[test]
       - name: Test with pytest
         run: |
-          pytest -n1 --cov-report xml --cov=aicspylibczi aicspylibczi/tests
+          pytest --cov-report xml --cov=aicspylibczi aicspylibczi/tests
       - name: Build the sdist
         run: pipx run build --sdist
       - name: Check install from sdist
@@ -47,7 +47,7 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
           pip install .[test]
       - name: Lint with flake8
         run: |
