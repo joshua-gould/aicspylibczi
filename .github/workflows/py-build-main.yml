@@ -4,6 +4,7 @@ on:
       - main
   schedule:
     - cron: 0 18 * * 1
+  workflow_dispatch:
 
 env:
   CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
