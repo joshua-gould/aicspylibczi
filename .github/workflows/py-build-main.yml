@@ -4,6 +4,7 @@ on:
       - main
   schedule:
     - cron: 0 18 * * 1
+  workflow_dispatch:
 
 env:
   CIBW_TEST_COMMAND: pytest {project}/aicspylibczi/tests
@@ -99,7 +100,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: pypa/cibuildwheel@v2.17.0
+      - uses: pypa/cibuildwheel@v2.19.2
         env:
           CIBW_BUILD: "*-${{ matrix.cibw-arch }}"
           CIBW_BEFORE_ALL_LINUX: yum install -y zlib-devel libpng-devel
