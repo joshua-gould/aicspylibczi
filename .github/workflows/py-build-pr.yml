@@ -31,8 +31,6 @@ jobs:
           MY_VERSION=$(python setup.py --version)
           pip install dist/aicspylibczi-$MY_VERSION.tar.gz
         shell: bash
-      - name: Upload codecov
-        uses: codecov/codecov-action@v4
 
   lint:
     runs-on: ubuntu-latest

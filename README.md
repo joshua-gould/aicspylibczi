@@ -2,7 +2,6 @@
 
 [![C++ Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/C%2B%2B%20Main%20Build/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
 [![Python Build & Test](https://github.com/AllenCellModeling/aicspylibczi/workflows/Python%20Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicspylibczi/actions)
-[![codecov](https://codecov.io/gh/AllenCellModeling/aicspylibczi/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicspylibczi)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/AllenCellModeling/aicspylibczi/blob/master/LICENSE)
 
 Python module to expose [libCZI](https://github.com/zeiss-microscopy/libCZI) functionality for reading (subset of) Zeiss
