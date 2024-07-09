@@ -121,8 +121,10 @@ jobs:
     name: Upload if release
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     if: "contains(github.event.head_commit.message, 'Bump version')"
-
     steps:
       - uses: actions/setup-python@v5
 
@@ -132,7 +134,4 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - uses: pypa/gh-action-pypi-publish@v1.4.2
-        with:
-          user: aicspypi
-          password: ${{ secrets.PYPI_TOKEN }}
+      - uses: pypa/gh-action-pypi-publish@ec4db0b4ddc65acdf4bff5fa45ac92d78b56bdf0
