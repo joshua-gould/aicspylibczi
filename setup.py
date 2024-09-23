@@ -18,6 +18,7 @@ requirements = [
 ]
 
 test_requirements = [
+    "dask",
     "flake8",
     "pytest",
     "pytest-cov",

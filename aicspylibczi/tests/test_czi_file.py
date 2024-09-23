@@ -1,11 +1,21 @@
 import io
-import numpy as np
-import pytest
 import xml.etree.ElementTree as ET
 
+import numpy as np
+import pytest
+from dask import delayed
 
-from aicspylibczi import CziFile
 from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
+from aicspylibczi import CziFile
+
+
+def test_read_delayed(data_dir):
+    def _test_delayed():
+        czi = CziFile(data_dir / "mosaic_test.czi")
+        img, shp = czi.read_image()
+        return img
+
+    delayed(_test_delayed).compute()
 
 
 @pytest.mark.parametrize(
@@ -27,12 +37,12 @@ def test_is_a_directory(data_dir, as_string):
     [
         pytest.param(float(10), False, marks=pytest.mark.raises(exception=TypeError)),
         (
-            io.BytesIO(b"thisisatestletsseewhathappens"),
-            io.BytesIO(b"thisisatestletsseewhathappens"),
+                io.BytesIO(b"thisisatestletsseewhathappens"),
+                io.BytesIO(b"thisisatestletsseewhathappens"),
         ),
         (
-            b"thisisatestletsseewhathappens",
-            io.BytesIO(b"thisisatestletsseewhathappens"),
+                b"thisisatestletsseewhathappens",
+                io.BytesIO(b"thisisatestletsseewhathappens"),
         ),
         (np.zeros(5), np.zeros(5)),
     ],
@@ -91,19 +101,19 @@ def test_metadata(data_dir, fname, xp_query, expected):
     "fname, expected_img_shape, expected_img_dims",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",
-            (1, 1, 325, 475),
-            [("B", 1), ("C", 1), ("Y", 325), ("X", 475)],
+                "s_1_t_1_c_1_z_1.czi",
+                (1, 1, 325, 475),
+                [("B", 1), ("C", 1), ("Y", 325), ("X", 475)],
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",
-            (1, 3, 3, 5, 325, 475),
-            [("B", 1), ("S", 3), ("C", 3), ("Z", 5), ("Y", 325), ("X", 475)],
+                "s_3_t_1_c_3_z_5.czi",
+                (1, 3, 3, 5, 325, 475),
+                [("B", 1), ("S", 3), ("C", 3), ("Z", 5), ("Y", 325), ("X", 475)],
         ),
     ],
 )
 def test_read_image_from_istream(
-    data_dir, fname, expected_img_shape, expected_img_dims
+        data_dir, fname, expected_img_shape, expected_img_dims
 ):
     with open(data_dir / fname, "rb") as fp:
         czi = CziFile(czi_filename=fp)
@@ -269,43 +279,43 @@ def test_read_image_args(data_dir, fname, args, expected):
     "fname, exp_str, exp_dict",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",
-            "BCYX",
-            [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
+                "s_1_t_1_c_1_z_1.czi",
+                "BCYX",
+                [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",
-            "BSCZYX",
-            [
-                {
-                    "B": (0, 1),
-                    "C": (0, 3),
-                    "X": (0, 475),
-                    "Y": (0, 325),
-                    "S": (0, 3),
-                    "Z": (0, 5),
-                }
-            ],
+                "s_3_t_1_c_3_z_5.czi",
+                "BSCZYX",
+                [
+                    {
+                        "B": (0, 1),
+                        "C": (0, 3),
+                        "X": (0, 475),
+                        "Y": (0, 325),
+                        "S": (0, 3),
+                        "Z": (0, 5),
+                    }
+                ],
         ),
         (
-            "mosaic_test.czi",
-            "STCZMYX",
-            [
-                {
-                    "S": (0, 1),
-                    "T": (0, 1),
-                    "C": (0, 1),
-                    "Z": (0, 1),
-                    "M": (0, 2),
-                    "Y": (0, 624),
-                    "X": (0, 924),
-                }
-            ],
+                "mosaic_test.czi",
+                "STCZMYX",
+                [
+                    {
+                        "S": (0, 1),
+                        "T": (0, 1),
+                        "C": (0, 1),
+                        "Z": (0, 1),
+                        "M": (0, 2),
+                        "Y": (0, 624),
+                        "X": (0, 924),
+                    }
+                ],
         ),
         (
-            "RGB-8bit.czi",
-            "TYXA",
-            [{"T": (0, 1), "Y": (0, 624), "X": (0, 924), "A": (0, 3)}],
+                "RGB-8bit.czi",
+                "TYXA",
+                [{"T": (0, 1), "Y": (0, 624), "X": (0, 924), "A": (0, 3)}],
         ),
     ],
 )
@@ -338,12 +348,12 @@ def test_read_image_mosaic(data_dir, fname):
     "fname, expected",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",
-            "<METADATA><Tags><AcquisitionTime>2019-06-27T18:33:41.1154211Z</AcquisitionTime>",
+                "s_1_t_1_c_1_z_1.czi",
+                "<METADATA><Tags><AcquisitionTime>2019-06-27T18:33:41.1154211Z</AcquisitionTime>",
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",
-            "<METADATA><Tags><AcquisitionTime>2019-06-27T18:39:26.6459707Z</AcquisitionTime>",
+                "s_3_t_1_c_3_z_5.czi",
+                "<METADATA><Tags><AcquisitionTime>2019-06-27T18:39:26.6459707Z</AcquisitionTime>",
         ),
     ],
 )
@@ -358,18 +368,18 @@ def test_read_subblock_meta(data_dir, fname, expected):
     "fname, expected",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",
-            b'<?xml version=\'1.0\' encoding=\'utf8\'?>\n<Subblocks><Subblock B="0" C="0" S="0"><METADATA>'
-            b"<Tags><AcquisitionTime>2019-06-27T18:33:41.1154211Z"
-            b'</AcquisitionTime><DetectorState><CameraState Id=""><CameraDisplayName>Camera 2 Left'
-            b"</CameraDisplayName><ApplyCameraProfile>false</ApplyCameraProfile><ApplyImageOrientation>"
-            b"true</ApplyImageOrientation><ExposureTime>10004210.526316</ExposureTime><Frame>"
-            b"100,376,1900,1300</Frame><ImageOrientation>3</ImageOrientation></CameraState>"
-            b"</DetectorState><StageXPosition>+000000043427.9820</StageXPosition><StageYPosition>"
-            b"+000000042720.2960</StageYPosition><FocusPosition>+000000009801.2900</FocusPosition>"
-            b"<RoiCenterOffsetX>+000000000007.0420</RoiCenterOffsetX><RoiCenterOffsetY>"
-            b"+000000000000.5420</RoiCenterOffsetY></Tags><DataSchema><ValidBitsPerPixel>16"
-            b"</ValidBitsPerPixel></DataSchema><AttachmentSchema /></METADATA></Subblock></Subblocks>",
+                "s_1_t_1_c_1_z_1.czi",
+                b'<?xml version=\'1.0\' encoding=\'utf8\'?>\n<Subblocks><Subblock B="0" C="0" S="0"><METADATA>'
+                b"<Tags><AcquisitionTime>2019-06-27T18:33:41.1154211Z"
+                b'</AcquisitionTime><DetectorState><CameraState Id=""><CameraDisplayName>Camera 2 Left'
+                b"</CameraDisplayName><ApplyCameraProfile>false</ApplyCameraProfile><ApplyImageOrientation>"
+                b"true</ApplyImageOrientation><ExposureTime>10004210.526316</ExposureTime><Frame>"
+                b"100,376,1900,1300</Frame><ImageOrientation>3</ImageOrientation></CameraState>"
+                b"</DetectorState><StageXPosition>+000000043427.9820</StageXPosition><StageYPosition>"
+                b"+000000042720.2960</StageYPosition><FocusPosition>+000000009801.2900</FocusPosition>"
+                b"<RoiCenterOffsetX>+000000000007.0420</RoiCenterOffsetX><RoiCenterOffsetY>"
+                b"+000000000000.5420</RoiCenterOffsetY></Tags><DataSchema><ValidBitsPerPixel>16"
+                b"</ValidBitsPerPixel></DataSchema><AttachmentSchema /></METADATA></Subblock></Subblocks>",
         ),
     ],
 )
@@ -385,21 +395,21 @@ def test_read_unified_subblock_meta(data_dir, fname, expected):
     "fname, expects",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",
-            [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
+                "s_1_t_1_c_1_z_1.czi",
+                [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",
-            [
-                {
-                    "B": (0, 1),
-                    "C": (0, 3),
-                    "X": (0, 475),
-                    "Y": (0, 325),
-                    "S": (0, 3),
-                    "Z": (0, 5),
-                }
-            ],
+                "s_3_t_1_c_3_z_5.czi",
+                [
+                    {
+                        "B": (0, 1),
+                        "C": (0, 3),
+                        "X": (0, 475),
+                        "Y": (0, 325),
+                        "S": (0, 3),
+                        "Z": (0, 5),
+                    }
+                ],
         ),
     ],
 )
@@ -414,14 +424,14 @@ def test_image_shape(data_dir, fname, expects):
     "fname, unscaled_size, expects",
     [
         (
-            "mosaic_test.czi",
-            (0, 0, 1756, 624),
-            [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
+                "mosaic_test.czi",
+                (0, 0, 1756, 624),
+                [{"B": (0, 1), "C": (0, 1), "X": (0, 475), "Y": (0, 325)}],
         ),
         (
-            "Multiscene_CZI_3Scenes.czi",
-            (495412, 354694, 3587, 1926),
-            [{"X": (0, 358), "Y": (0, 192)}],
+                "Multiscene_CZI_3Scenes.czi",
+                (495412, 354694, 3587, 1926),
+                [{"X": (0, 358), "Y": (0, 192)}],
         ),
     ],
 )
@@ -493,14 +503,14 @@ def test_cores_arg():
     [
         ("mosaic_test.czi", {"S": 0, "M": 0}, [(0, 0, 924, 624), (832, 0, 924, 624)]),
         (
-            "Multiscene_CZI_3Scenes.czi",
-            {"S": 0, "M": 0},
-            [
-                (495412, 354694, 256, 256),
-                (495643, 354694, 256, 256),
-                (495643, 354924, 256, 256),
-                (495412, 354924, 256, 256),
-            ],
+                "Multiscene_CZI_3Scenes.czi",
+                {"S": 0, "M": 0},
+                [
+                    (495412, 354694, 256, 256),
+                    (495643, 354694, 256, 256),
+                    (495643, 354924, 256, 256),
+                    (495412, 354924, 256, 256),
+                ],
         ),
     ],
 )
